@@ -1,0 +1,273 @@
+[
+  {
+    "country": "Netherlands",
+    "city": "Amsterdam",
+    "filename": "amsterdam.csv"
+  },
+  {
+    "country": "Belgium",
+    "city": "Antwerp",
+    "filename": "antwerp.csv"
+  },
+  {
+    "country": "Greece",
+    "city": "Athens",
+    "filename": "athens.csv"
+  },
+  {
+    "country": "Spain",
+    "city": "Barcelona",
+    "filename": "barcelona.csv"
+  },
+  {
+    "country": "Italy",
+    "city": "Bergamo",
+    "filename": "bergamo.csv"
+  },
+  {
+    "country": "Germany",
+    "city": "Berlin",
+    "filename": "berlin.csv"
+  },
+  {
+    "country": "Italy",
+    "city": "Bologna",
+    "filename": "bologna.csv"
+  },
+  {
+    "country": "France",
+    "city": "Bordeaux",
+    "filename": "bordeaux.csv"
+  },
+  {
+    "country": "United Kingdom",
+    "city": "Bristol",
+    "filename": "bristol.csv"
+  },
+  {
+    "country": "Belgium",
+    "city": "Brussels",
+    "filename": "brussles.csv"
+  },
+  {
+    "country": "Hungary",
+    "city": "Budapest",
+    "filename": "budapest.csv"
+  },
+  {
+    "country": "Denmark",
+    "city": "Copenhagen",
+    "filename": "copenhagen.csv"
+  },
+  {
+    "country": "Greece",
+    "city": "Crete",
+    "filename": "crete.csv"
+  },
+  {
+    "country": "Ireland",
+    "city": "Dublin",
+    "filename": "dublin.csv"
+  },
+  {
+    "country": "United Kingdom",
+    "city": "Edinburgh",
+    "filename": "edinburgh.csv"
+  },
+  {
+    "country": "Spain",
+    "city": "Euskadi",
+    "filename": "euskadi.csv"
+  },
+  {
+    "country": "Italy",
+    "city": "Florence",
+    "filename": "florence.csv"
+  },
+  {
+    "country": "Switzerland",
+    "city": "Geneva",
+    "filename": "geneva.csv"
+  },
+  {
+    "country": "Belgium",
+    "city": "Ghent",
+    "filename": "ghent.csv"
+  },
+  {
+    "country": "Spain",
+    "city": "Girona",
+    "filename": "girona.csv"
+  },
+  {
+    "country": "United Kingdom",
+    "city": "Greater Manchester",
+    "filename": "greater_manchester.csv"
+  },
+  {
+    "country": "Netherlands",
+    "city": "Hague",
+    "filename": "hague.csv"
+  },
+  {
+    "country": "Turkey",
+    "city": "Istanbul",
+    "filename": "istanbul.csv"
+  },
+  {
+    "country": "Portugal",
+    "city": "Lisbon",
+    "filename": "lisbon.csv"
+  },
+  {
+    "country": "United Kingdom",
+    "city": "London",
+    "filename": "london.csv"
+  },
+  {
+    "country": "France",
+    "city": "Lyon",
+    "filename": "lyon.csv"
+  },
+  {
+    "country": "Spain",
+    "city": "Madrid",
+    "filename": "madrid.csv"
+  },
+  {
+    "country": "Spain",
+    "city": "Malaga",
+    "filename": "malaga.csv"
+  },
+  {
+    "country": "Spain",
+    "city": "Mallorca",
+    "filename": "mallorca.csv"
+  },
+  {
+    "country": "Malta",
+    "city": "Malta",
+    "filename": "malta.csv"
+  },
+  {
+    "country": "Spain",
+    "city": "Menorca",
+    "filename": "menorca.csv"
+  },
+  {
+    "country": "Italy",
+    "city": "Milan",
+    "filename": "milan.csv"
+  },
+  {
+    "country": "Germany",
+    "city": "Munich",
+    "filename": "munich.csv"
+  },
+  {
+    "country": "Italy",
+    "city": "Naples",
+    "filename": "naples.csv"
+  },
+  {
+    "country": "Norway",
+    "city": "Oslo",
+    "filename": "oslo.csv"
+  },
+  {
+    "country": "France",
+    "city": "Paris",
+    "filename": "paris.csv"
+  },
+  {
+    "country": "Spain",
+    "city": "Pays Basque",
+    "filename": "pays_basque.csv"
+  },
+  {
+    "country": "Portugal",
+    "city": "Porto",
+    "filename": "porto.csv"
+  },
+  {
+    "country": "Czech Republic",
+    "city": "Prague",
+    "filename": "praque.csv"
+  },
+  {
+    "country": "Italy",
+    "city": "Puglia",
+    "filename": "puglia.csv"
+  },
+  {
+    "country": "Latvia",
+    "city": "Riga",
+    "filename": "riga.csv"
+  },
+  {
+    "country": "Italy",
+    "city": "Rome",
+    "filename": "rome.csv"
+  },
+  {
+    "country": "Netherlands",
+    "city": "Rotterdam",
+    "filename": "rotterdam.csv"
+  },
+  {
+    "country": "Spain",
+    "city": "Sevilla",
+    "filename": "sevilla.csv"
+  },
+  {
+    "country": "Italy",
+    "city": "Sicily",
+    "filename": "sicily.csv"
+  },
+  {
+    "country": "Greece",
+    "city": "South Aegean",
+    "filename": "south_aegean.csv"
+  },
+  {
+    "country": "Sweden",
+    "city": "Stockholm",
+    "filename": "stockholm.csv"
+  },
+  {
+    "country": "Greece",
+    "city": "Thessaloniki",
+    "filename": "thessaloniki.csv"
+  },
+  {
+    "country": "Italy",
+    "city": "Trentino",
+    "filename": "trentino.csv"
+  },
+  {
+    "country": "Spain",
+    "city": "Valencia",
+    "filename": "valencia.csv"
+  },
+  {
+    "country": "Switzerland",
+    "city": "Vaud",
+    "filename": "vaud.csv"
+  },
+  {
+    "country": "Italy",
+    "city": "Venice",
+    "filename": "venice.csv"
+  },
+  {
+    "country": "Austria",
+    "city": "Vienna",
+    "filename": "vienna.csv"
+  },
+  {
+    "country": "Switzerland",
+    "city": "Zurich",
+    "filename": "zurich.csv"
+  }
+]
+

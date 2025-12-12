@@ -1,0 +1,488 @@
+[
+  {
+    "id": "amsterdam",
+    "country": "Netherlands",
+    "city": "Amsterdam",
+    "avg_price": 336.7851549199864,
+    "count": 10480,
+    "lat": 52.36667920224869,
+    "lng": 4.889447078032987
+  },
+  {
+    "id": "antwerp",
+    "country": "Belgium",
+    "city": "Antwerp",
+    "avg_price": 282.70309098824555,
+    "count": 2654,
+    "lat": 51.21492140205613,
+    "lng": 4.413243099122416
+  },
+  {
+    "id": "athens",
+    "country": "Greece",
+    "city": "Athens",
+    "avg_price": 122.89982098595428,
+    "count": 15584,
+    "lat": 37.979571370793025,
+    "lng": 23.731338434715244
+  },
+  {
+    "id": "barcelona",
+    "country": "Spain",
+    "city": "Barcelona",
+    "avg_price": 187.3127127520293,
+    "count": 19410,
+    "lat": 41.39224759492889,
+    "lng": 2.166967798162028
+  },
+  {
+    "id": "bergamo",
+    "country": "Italy",
+    "city": "Bergamo",
+    "avg_price": 195.96677260907254,
+    "count": 3719,
+    "lat": 45.745191197676725,
+    "lng": 9.77320425118757
+  },
+  {
+    "id": "berlin",
+    "country": "Germany",
+    "city": "Berlin",
+    "avg_price": 201.24039291882556,
+    "count": 14274,
+    "lat": 52.50891786605505,
+    "lng": 13.402306612844747
+  },
+  {
+    "id": "bologna",
+    "country": "Italy",
+    "city": "Bologna",
+    "avg_price": 197.20360009729993,
+    "count": 4642,
+    "lat": 44.49761328193857,
+    "lng": 11.3439995731971
+  },
+  {
+    "id": "bordeaux",
+    "country": "France",
+    "city": "Bordeaux",
+    "avg_price": 125.32582384661474,
+    "count": 12383,
+    "lat": 44.84028170192081,
+    "lng": -0.5881860234841142
+  },
+  {
+    "id": "bristol",
+    "country": "United Kingdom",
+    "city": "Bristol",
+    "avg_price": 136.32244897959183,
+    "count": 2845,
+    "lat": 51.46112434191512,
+    "lng": -2.5892361163154223
+  },
+  {
+    "id": "brussels",
+    "country": "Belgium",
+    "city": "Brussels",
+    "avg_price": 110.24381687423259,
+    "count": 6721,
+    "lat": 50.83930562430423,
+    "lng": 4.360591490640795
+  },
+  {
+    "id": "budapest",
+    "country": "Hungary",
+    "city": "Budapest",
+    "avg_price": 38559.28245659497,
+    "count": 12391,
+    "lat": 47.49942481291279,
+    "lng": 19.06309498535505
+  },
+  {
+    "id": "copenhagen",
+    "country": "Denmark",
+    "city": "Copenhagen",
+    "avg_price": 1417.8901019449063,
+    "count": 22684,
+    "lat": 55.68043496746815,
+    "lng": 12.55852040524861
+  },
+  {
+    "id": "crete",
+    "country": "Greece",
+    "city": "Crete",
+    "avg_price": 260.9752635681175,
+    "count": 27582,
+    "lat": 35.34954327017274,
+    "lng": 24.619409047956715
+  },
+  {
+    "id": "dublin",
+    "country": "Ireland",
+    "city": "Dublin",
+    "avg_price": 204.49771167048056,
+    "count": 6945,
+    "lat": 53.34841175099628,
+    "lng": -6.2589271268633935
+  },
+  {
+    "id": "edinburgh",
+    "country": "United Kingdom",
+    "city": "Edinburgh",
+    "avg_price": 300.5183756345178,
+    "count": 4936,
+    "lat": 55.949997418852845,
+    "lng": -3.1997331476170547
+  },
+  {
+    "id": "euskadi",
+    "country": "Spain",
+    "city": "Euskadi",
+    "avg_price": 253.757371007371,
+    "count": 7151,
+    "lat": 43.26020926836991,
+    "lng": -2.513018800365393
+  },
+  {
+    "id": "florence",
+    "country": "Italy",
+    "city": "Florence",
+    "avg_price": 263.7838017628472,
+    "count": 13043,
+    "lat": 43.774274367847816,
+    "lng": 11.253361144574258
+  },
+  {
+    "id": "geneva",
+    "country": "Switzerland",
+    "city": "Geneva",
+    "avg_price": 166.05076392311483,
+    "count": 2719,
+    "lat": 46.207896185778985,
+    "lng": 6.143274443449236
+  },
+  {
+    "id": "ghent",
+    "country": "Belgium",
+    "city": "Ghent",
+    "avg_price": 127.49473684210527,
+    "count": 1392,
+    "lat": 51.052106079528684,
+    "lng": 3.723024990516915
+  },
+  {
+    "id": "girona",
+    "country": "Spain",
+    "city": "Girona",
+    "avg_price": 470.6334434833317,
+    "count": 22456,
+    "lat": 42.03058234197792,
+    "lng": 3.010761529460474
+  },
+  {
+    "id": "greater_manchester",
+    "country": "United Kingdom",
+    "city": "Greater Manchester",
+    "avg_price": 134.618561414203,
+    "count": 7418,
+    "lat": 53.47945333928637,
+    "lng": -2.255997928164812
+  },
+  {
+    "id": "hague",
+    "country": "Netherlands",
+    "city": "Hague",
+    "avg_price": 2804.3619691119693,
+    "count": 1481,
+    "lat": 52.08636341320207,
+    "lng": 4.287374357873367
+  },
+  {
+    "id": "istanbul",
+    "country": "Turkey",
+    "city": "Istanbul",
+    "avg_price": 5083.7119375792145,
+    "count": 30051,
+    "lat": 41.0296444687862,
+    "lng": 28.972530504493143
+  },
+  {
+    "id": "lisbon",
+    "country": "Portugal",
+    "city": "Lisbon",
+    "avg_price": 248.11604938271606,
+    "count": 25449,
+    "lat": 38.762926485750114,
+    "lng": -9.20784672010109
+  },
+  {
+    "id": "london",
+    "country": "United Kingdom",
+    "city": "London",
+    "avg_price": 229.9169827154915,
+    "count": 96871,
+    "lat": 51.50973982394052,
+    "lng": -0.12763797732931664
+  },
+  {
+    "id": "lyon",
+    "country": "France",
+    "city": "Lyon",
+    "avg_price": 106.44659132336858,
+    "count": 9691,
+    "lat": 45.75916293403547,
+    "lng": 4.840311298678142
+  },
+  {
+    "id": "madrid",
+    "country": "Spain",
+    "city": "Madrid",
+    "avg_price": 156.69144726428533,
+    "count": 25000,
+    "lat": 40.42233365988343,
+    "lng": -3.6937336612558154
+  },
+  {
+    "id": "malaga",
+    "country": "Spain",
+    "city": "Malaga",
+    "avg_price": 267.530457981325,
+    "count": 9710,
+    "lat": 36.72036051447983,
+    "lng": -4.42142373292378
+  },
+  {
+    "id": "mallorca",
+    "country": "Spain",
+    "city": "Mallorca",
+    "avg_price": 1512.9691222466226,
+    "count": 15034,
+    "lat": 39.660471746251886,
+    "lng": 3.014040674375223
+  },
+  {
+    "id": "malta",
+    "country": "Malta",
+    "city": "Malta",
+    "avg_price": 140.95558739255014,
+    "count": 12570,
+    "lat": 35.929515072349226,
+    "lng": 14.447020443183382
+  },
+  {
+    "id": "menorca",
+    "country": "Spain",
+    "city": "Menorca",
+    "avg_price": 710.9130569306931,
+    "count": 3679,
+    "lat": 39.94189407276041,
+    "lng": 4.034464379186805
+  },
+  {
+    "id": "milan",
+    "country": "Italy",
+    "city": "Milan",
+    "avg_price": 183.36410306556496,
+    "count": 22540,
+    "lat": 45.471611823321595,
+    "lng": 9.187812010355852
+  },
+  {
+    "id": "munich",
+    "country": "Germany",
+    "city": "Munich",
+    "avg_price": 263.7360342673568,
+    "count": 8274,
+    "lat": 48.13972249394121,
+    "lng": 11.562333262736121
+  },
+  {
+    "id": "naples",
+    "country": "Italy",
+    "city": "Naples",
+    "avg_price": 183.2873866272938,
+    "count": 10669,
+    "lat": 40.847530838974876,
+    "lng": 14.250776233593239
+  },
+  {
+    "id": "oslo",
+    "country": "Norway",
+    "city": "Oslo",
+    "avg_price": 1675.1407560611283,
+    "count": 12160,
+    "lat": 59.9218402531551,
+    "lng": 10.761276407829689
+  },
+  {
+    "id": "paris",
+    "country": "France",
+    "city": "Paris",
+    "avg_price": NaN,
+    "count": 81853,
+    "lat": 48.86397956038535,
+    "lng": 2.3430398101808723
+  },
+  {
+    "id": "pays_basque",
+    "country": "Spain",
+    "city": "Pays Basque",
+    "avg_price": 296.68683641830313,
+    "count": 12062,
+    "lat": 43.424761604221814,
+    "lng": -1.5225074515291452
+  },
+  {
+    "id": "porto",
+    "country": "Portugal",
+    "city": "Porto",
+    "avg_price": 142.48620375985445,
+    "count": 14806,
+    "lat": 41.153494861549504,
+    "lng": -8.613221059007692
+  },
+  {
+    "id": "prague",
+    "country": "Czech Republic",
+    "city": "Prague",
+    "avg_price": 4385.323301074125,
+    "count": 10593,
+    "lat": 50.08113789482957,
+    "lng": 14.430494258101298
+  },
+  {
+    "id": "puglia",
+    "country": "Italy",
+    "city": "Puglia",
+    "avg_price": 360.3657712648231,
+    "count": 48553,
+    "lat": 40.55692893094761,
+    "lng": 17.573680608477748
+  },
+  {
+    "id": "riga",
+    "country": "Latvia",
+    "city": "Riga",
+    "avg_price": 64.5864468864469,
+    "count": 3205,
+    "lat": 56.953757670152314,
+    "lng": 24.11987027210806
+  },
+  {
+    "id": "rome",
+    "country": "Italy",
+    "city": "Rome",
+    "avg_price": 197.32800023835063,
+    "count": 37652,
+    "lat": 41.89124935009271,
+    "lng": 12.4805140548737
+  },
+  {
+    "id": "rotterdam",
+    "country": "Netherlands",
+    "city": "Rotterdam",
+    "avg_price": 504.64814814814815,
+    "count": 1351,
+    "lat": 51.92188770654853,
+    "lng": 4.471153265818338
+  },
+  {
+    "id": "sevilla",
+    "country": "Spain",
+    "city": "Sevilla",
+    "avg_price": 209.17913204062788,
+    "count": 8215,
+    "lat": 37.39012979888988,
+    "lng": -5.990908884467543
+  },
+  {
+    "id": "sicily",
+    "country": "Italy",
+    "city": "Sicily",
+    "avg_price": 348.1354815086049,
+    "count": 57531,
+    "lat": 37.640144909790486,
+    "lng": 14.138333426499246
+  },
+  {
+    "id": "south_aegean",
+    "country": "Greece",
+    "city": "South Aegean",
+    "avg_price": 459.6895072935579,
+    "count": 37139,
+    "lat": 36.877237670826524,
+    "lng": 25.871290224463046
+  },
+  {
+    "id": "stockholm",
+    "country": "Sweden",
+    "city": "Stockholm",
+    "avg_price": 1690.4730407523512,
+    "count": 4955,
+    "lat": 59.31808828360755,
+    "lng": 18.03005735613157
+  },
+  {
+    "id": "thessaloniki",
+    "country": "Greece",
+    "city": "Thessaloniki",
+    "avg_price": 89.01574438527437,
+    "count": 4762,
+    "lat": 40.631064733479555,
+    "lng": 22.946971507464248
+  },
+  {
+    "id": "trentino",
+    "country": "Italy",
+    "city": "Trentino",
+    "avg_price": 731.1763541924314,
+    "count": 8919,
+    "lat": 46.136007908226226,
+    "lng": 11.107778600227643
+  },
+  {
+    "id": "valencia",
+    "country": "Spain",
+    "city": "Valencia",
+    "avg_price": 164.11334002006018,
+    "count": 7844,
+    "lat": 39.467440346907594,
+    "lng": -0.36410234472275727
+  },
+  {
+    "id": "vaud",
+    "country": "Switzerland",
+    "city": "Vaud",
+    "avg_price": 546758.6019343344,
+    "count": 5514,
+    "lat": 46.482129532835955,
+    "lng": 6.749677266463126
+  },
+  {
+    "id": "venice",
+    "country": "Italy",
+    "city": "Venice",
+    "avg_price": 241.0160997143599,
+    "count": 8590,
+    "lat": 45.44656606265223,
+    "lng": 12.316001027602072
+  },
+  {
+    "id": "vienna",
+    "country": "Austria",
+    "city": "Vienna",
+    "avg_price": 156.7276343877353,
+    "count": 14123,
+    "lat": 48.20399285024554,
+    "lng": 16.360793638717556
+  },
+  {
+    "id": "zurich",
+    "country": "Switzerland",
+    "city": "Zurich",
+    "avg_price": 197.39073112265282,
+    "count": 3301,
+    "lat": 47.378681981270525,
+    "lng": 8.53218345214269
+  }
+]

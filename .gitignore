@@ -1,0 +1,9 @@
+# Python virtual environment
+venv/
+
+# macOS system files
+.DS_Store
+
+# CSV files in data/raw/listings
+data/raw/listings/*.csv
+
