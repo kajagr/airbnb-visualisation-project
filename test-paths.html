@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Path Test</title>
+    <style>
+        body {
+            font-family: monospace;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .test {
+            background: white;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+            border-left: 4px solid #3498db;
+        }
+        .success { border-left-color: #27ae60; }
+        .error { border-left-color: #e74c3c; }
+        pre {
+            background: #ecf0f1;
+            padding: 10px;
+            border-radius: 3px;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔍 File Path Test</h1>
+    <p>Testing if data files are accessible</p>
+    <p><strong>⚠️ Run server from PROJECT ROOT (not web/):</strong></p>
+    <pre style="background: #fff3cd; border-left-color: #ffc107;">cd airbnb-visualisation-project
+python -m http.server 8000
+# Then open: http://localhost:8000/web/test-paths.html</pre>
+    
+    <div id="results"></div>
+
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script>
+        const results = document.getElementById('results');
+        
+        async function testPath(name, path) {
+            const div = document.createElement('div');
+            div.className = 'test';
+            div.innerHTML = `<strong>Testing:</strong> ${name}<br><code>${path}</code><br><span id="${name}-status">Loading...</span>`;
+            results.appendChild(div);
+            
+            try {
+                const data = await d3.json(path);
+                div.className = 'test success';
+                document.getElementById(`${name}-status`).innerHTML = 
+                    `✅ SUCCESS!<br>Loaded ${Array.isArray(data) ? data.length + ' items' : 'data'}<br><pre>${JSON.stringify(data).substring(0, 200)}...</pre>`;
+            } catch (error) {
+                div.className = 'test error';
+                document.getElementById(`${name}-status`).innerHTML = 
+                    `❌ FAILED<br>Error: ${error.message}`;
+            }
+        }
+
+        async function runTests() {
+            console.log('Current URL:', window.location.href);
+            console.log('Testing file paths...');
+            console.log('NOTE: Server should be running from PROJECT ROOT');
+            
+            await testPath('cities_statistical_data', 'data/processed/cities_statistical_data.json');
+            await testPath('cities_data', 'data/raw/mapping_info/cities_data.json');
+            
+            // Test loading a CSV
+            const div = document.createElement('div');
+            div.className = 'test';
+            div.innerHTML = `<strong>Testing:</strong> Sample CSV (Amsterdam)<br><code>data/raw/listings/amsterdam.csv</code><br><span id="csv-status">Loading...</span>`;
+            results.appendChild(div);
+            
+            try {
+                const data = await d3.csv('data/raw/listings/amsterdam.csv');
+                div.className = 'test success';
+                document.getElementById('csv-status').innerHTML = 
+                    `✅ SUCCESS!<br>Loaded ${data.length} listings<br>Sample: ${data[0].name}`;
+            } catch (error) {
+                div.className = 'test error';
+                document.getElementById('csv-status').innerHTML = 
+                    `❌ FAILED<br>Error: ${error.message}`;
+            }
+        }
+
+        runTests();
+    </script>
+</body>
+</html>
