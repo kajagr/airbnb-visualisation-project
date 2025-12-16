@@ -185,16 +185,22 @@ function renderCityMarkers() {
             .addTo(state.europeMap)
             .on('click', () => zoomToCity(city));
 
-        // Create popup
-        const popupContent = `
-            <div class="popup-title">${city.city}</div>
-            <div class="popup-row"><span class="popup-label">Country:</span> ${city.country}</div>
-            <div class="popup-row"><span class="popup-label">Listings:</span> ${city.count.toLocaleString()}</div>
-            <div class="popup-row"><span class="popup-label">Avg Price:</span> ${city.avg_price != null ? '€' + city.avg_price.toFixed(2) : 'N/A'}</div>
-            <div class="popup-row" style="margin-top: 8px; font-style: italic; color: #3498db;">Click marker to explore city</div>
+        // Create tooltip that shows on hover
+        const tooltipContent = `
+            <div style="text-align: center;">
+                <strong style="font-size: 14px;">${city.city}</strong><br>
+                <span style="color: #7f8c8d; font-size: 12px;">${city.country}</span><br>
+                <span style="font-size: 13px;">${city.count.toLocaleString()} listings</span><br>
+                <span style="font-size: 13px;">€${city.avg_price != null ? city.avg_price.toFixed(2) : 'N/A'} avg</span>
+            </div>
         `;
         
-        marker.bindPopup(popupContent);
+        marker.bindTooltip(tooltipContent, {
+            permanent: false,
+            direction: 'top',
+            offset: [0, -size/2],
+            className: 'custom-tooltip'
+        });
 
         state.cityMarkers.push(marker);
     });
@@ -300,16 +306,37 @@ function renderAirbnbDots() {
             fillOpacity: 0.6
         }).addTo(state.cityMap);
 
-        // Create popup
-        const popupContent = `
-            <div class="popup-title">${listing.name || 'Airbnb Listing'}</div>
-            <div class="popup-row"><span class="popup-label">Host:</span> ${listing.host_name || 'N/A'}</div>
-            <div class="popup-row"><span class="popup-label">Price:</span> ${listing.price != null ? '€' + listing.price : 'N/A'}</div>
-            <div class="popup-row"><span class="popup-label">Room Type:</span> ${listing.room_type || 'N/A'}</div>
-            <div class="popup-row"><span class="popup-label">Neighbourhood:</span> ${listing.neighbourhood || 'N/A'}</div>
+        // Create tooltip that shows on hover
+        const tooltipContent = `
+            <div style="min-width: 150px;">
+                <strong style="font-size: 13px;">${listing.name || 'Airbnb Listing'}</strong><br>
+                <span style="color: #7f8c8d; font-size: 11px;">Host: ${listing.host_name || 'N/A'}</span><br>
+                <span style="font-size: 12px; color: #e74c3c; font-weight: 600;">€${listing.price != null ? listing.price : 'N/A'}</span><br>
+                <span style="font-size: 11px;">${listing.room_type || 'N/A'}</span>
+                ${listing.neighbourhood ? `<br><span style="font-size: 11px; color: #7f8c8d;">${listing.neighbourhood}</span>` : ''}
+            </div>
         `;
         
-        marker.bindPopup(popupContent);
+        marker.bindTooltip(tooltipContent, {
+            permanent: false,
+            direction: 'top',
+            className: 'custom-tooltip'
+        });
+
+        // Add hover effect
+        marker.on('mouseover', function() {
+            this.setStyle({
+                radius: 5,
+                fillOpacity: 1
+            });
+        });
+        
+        marker.on('mouseout', function() {
+            this.setStyle({
+                radius: 3,
+                fillOpacity: 0.6
+            });
+        });
 
         state.airbnbMarkers.push(marker);
     });
@@ -318,34 +345,39 @@ function renderAirbnbDots() {
 }
 
 function renderAirbnbHeatmap() {
-    console.log('Rendering heatmap...');
+    console.log('Rendering smooth heatmap...');
 
-    // Filter valid listings with prices
+    // Filter valid listings with coordinates
     const validListings = state.currentCityListings.filter(d => 
-        d.latitude && d.longitude && d.price && !isNaN(d.price)
+        d.latitude && d.longitude && !isNaN(d.latitude) && !isNaN(d.longitude)
     );
 
+    console.log('Valid listings for heatmap:', validListings.length);
+
     // Prepare data for heatmap [lat, lng, intensity]
-    const heatData = validListings.map(d => [d.latitude, d.longitude, 0.5]);
+    // Use price as intensity if available, otherwise use constant
+    const heatData = validListings.map(d => {
+        const intensity = d.price ? Math.min(d.price / 200, 1) : 0.5;
+        return [d.latitude, d.longitude, intensity];
+    });
 
-    // Create heatmap layer (using Leaflet.heat if available, otherwise use circle markers with clustering)
-    if (typeof L.heatLayer !== 'undefined') {
-        state.heatmapLayer = L.heatLayer(heatData, {
-            radius: 25,
-            blur: 15,
-            maxZoom: 17,
-            gradient: {
-                0.0: '#ffffb2',
-                0.5: '#fd8d3c',
-                1.0: '#bd0026'
-            }
-        }).addTo(state.cityMap);
-    } else {
-        // Fallback: use aggregated circle markers
-        renderAggregatedDots();
-    }
+    // Create smooth heatmap layer using Leaflet.heat
+    state.heatmapLayer = L.heatLayer(heatData, {
+        radius: 25,           // Size of each heat point
+        blur: 20,             // Blur amount for smooth gradient
+        maxZoom: 17,          // Max zoom where heatmap is visible
+        max: 1.0,             // Maximum intensity value
+        gradient: {           // Custom color gradient (red theme)
+            0.0: 'rgba(0,0,255,0)',
+            0.2: 'rgba(0,255,255,0.5)',
+            0.4: 'rgba(0,255,0,0.6)',
+            0.6: 'rgba(255,255,0,0.7)',
+            0.8: 'rgba(255,128,0,0.8)',
+            1.0: 'rgba(255,0,0,0.9)'
+        }
+    }).addTo(state.cityMap);
 
-    console.log('Heatmap rendered with', validListings.length, 'points');
+    console.log('Smooth heatmap rendered with', validListings.length, 'points');
 }
 
 function renderAggregatedDots() {
