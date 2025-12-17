@@ -318,7 +318,7 @@
     "id": "paris",
     "country": "France",
     "city": "Paris",
-    "avg_price": NaN,
+    "avg_price": null,
     "count": 81853,
     "lat": 48.86397956038535,
     "lng": 2.3430398101808723
@@ -383,7 +383,7 @@
     "city": "Rotterdam",
     "avg_price": 504.64814814814815,
     "count": 1351,
-    "lat": 51.92188770654853,
+    "lat": 51.921887706548546,
     "lng": 4.471153265818338
   },
   {

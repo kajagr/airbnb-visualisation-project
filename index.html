@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Airbnb Europe - Gentrification & Housing Pressure</title>
+    
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    
+    <link rel="stylesheet" href="style.css">
+    
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    
+    <!-- Leaflet.heat for smooth heatmap visualization -->
+    <script src="https://unpkg.com/leaflet.heat@0.2.0/dist/leaflet-heat.js"></script>
+    
+    <!-- D3 for visualizations -->
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header>
+            <h1>Airbnb's Impact on European Cities</h1>
+            <p class="subtitle">Exploring gentrification and housing pressure across Europe</p>
+        </header>
+
+        <!-- Controls -->
+        <div class="controls">
+            <button id="backButton" class="control-btn hidden">
+                <svg width="20" height="20" viewBox="0 0 20 20">
+                    <path d="M10 0 L0 10 L10 20 M0 10 L20 10" stroke="currentColor" stroke-width="2" fill="none"/>
+                </svg>
+                Back to Europe
+            </button>
+            
+            <div class="toggle-container hidden" id="viewToggle">
+                <label class="toggle-label">
+                    <input type="radio" name="viewMode" value="dots" checked>
+                    <span>Dots</span>
+                </label>
+                <label class="toggle-label">
+                    <input type="radio" name="viewMode" value="heatmap">
+                    <span>Heatmap</span>
+                </label>
+            </div>
+        </div>
+
+        <!-- Main visualization container -->
+        <div class="visualization-container">
+            <!-- VIS 1: Teammate's visualization placeholder -->
+            <div id="vis1" class="vis-section">
+                <!-- VIS1: Your teammate's first visualization goes here -->
+            </div>
+
+            <!-- VIS 2: Europe Map & City Detail (your visualization) -->
+            <div id="vis2" class="vis-section active">
+                <div id="europeMap" class="map-container"></div>
+                <div id="cityMap" class="map-container hidden"></div>
+            </div>
+
+            <!-- VIS 3: Teammate's visualization placeholder -->
+            <div id="vis3" class="vis-section">
+                <!-- VIS3: Bar chart comparing Airbnb density goes here -->
+            </div>
+        </div>
+
+        <!-- Tooltip -->
+        <div id="tooltip" class="tooltip"></div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

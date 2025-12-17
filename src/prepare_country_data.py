@@ -36,7 +36,7 @@ for city_info in cities_data:
         "id": city.lower().replace(" ", "_"),
         "country": country,
         "city": city,
-        "avg_price": avg_price,
+        "avg_price": None if pd.isna(avg_price) else avg_price,  # FIX: Convert NaN to None
         "count": count,
         "lat": lat,
         "lng": lng,
@@ -45,3 +45,6 @@ for city_info in cities_data:
 # Write to a single JSON file
 with open(OUT_DIR / "cities_statistical_data.json", "w") as f:
     json.dump(cities_data_output, f, indent=2)
+
+print(f"✅ Processed {len(cities_data_output)} cities")
+print(f"📁 Output: {OUT_DIR / 'cities_statistical_data.json'}")

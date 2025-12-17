@@ -1,0 +1,364 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    background-color: #f5f5f5;
+    color: #333;
+}
+
+.container {
+    max-width: 1600px;
+    margin: 0 auto;
+    padding: 20px;
+    min-height: 100vh;
+}
+
+/* Header */
+header {
+    text-align: center;
+    margin-bottom: 30px;
+    padding: 20px 0;
+}
+
+header h1 {
+    font-size: 2.5rem;
+    font-weight: 600;
+    margin-bottom: 10px;
+    color: #2c3e50;
+}
+
+.subtitle {
+    font-size: 1.1rem;
+    color: #7f8c8d;
+}
+
+/* Controls */
+.controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding: 15px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.control-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 20px;
+    background: #3498db;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.control-btn:hover {
+    background: #2980b9;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+
+.control-btn.hidden {
+    display: none;
+}
+
+/* Toggle buttons */
+.toggle-container {
+    display: flex;
+    gap: 10px;
+    background: #ecf0f1;
+    padding: 5px;
+    border-radius: 6px;
+}
+
+.toggle-container.hidden {
+    display: none;
+}
+
+.toggle-label {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+}
+
+.toggle-label input {
+    display: none;
+}
+
+.toggle-label span {
+    padding: 8px 20px;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+    font-weight: 500;
+}
+
+.toggle-label input:checked + span {
+    background: #3498db;
+    color: white;
+}
+
+.toggle-label input:not(:checked) + span {
+    background: transparent;
+    color: #7f8c8d;
+}
+
+/* Visualization container */
+.visualization-container {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    padding: 20px;
+    min-height: calc(100vh - 250px);
+}
+
+.vis-section {
+    display: none;
+}
+
+.vis-section.active {
+    display: block;
+}
+
+/* SVG styling */
+#mapSvg {
+    width: 100%;
+    height: calc(100vh - 250px);
+    display: block;
+}
+
+/* Leaflet map containers */
+.map-container {
+    width: 100%;
+    height: calc(100vh - 250px);
+    position: relative;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.map-container.hidden {
+    display: none;
+}
+
+/* Leaflet custom marker styling */
+.city-marker {
+    background-color: #e74c3c;
+    border: 2px solid white;
+    border-radius: 50%;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.city-marker:hover {
+    background-color: #c0392b;
+    transform: scale(1.2);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.4);
+}
+
+.city-label-marker {
+    background: none;
+    border: none;
+    box-shadow: none;
+    font-size: 12px;
+    font-weight: 600;
+    color: #2c3e50;
+    white-space: nowrap;
+    text-shadow: 1px 1px 2px white, -1px -1px 2px white;
+}
+
+/* Custom tooltip styling */
+.custom-tooltip {
+    background-color: rgba(44, 62, 80, 0.95) !important;
+    border: none !important;
+    border-radius: 6px !important;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3) !important;
+    padding: 8px 12px !important;
+    color: white !important;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+.custom-tooltip::before {
+    border-top-color: rgba(44, 62, 80, 0.95) !important;
+}
+
+.leaflet-tooltip-top::before {
+    border-top-color: rgba(44, 62, 80, 0.95) !important;
+}
+
+.leaflet-tooltip-bottom::before {
+    border-bottom-color: rgba(44, 62, 80, 0.95) !important;
+}
+
+.leaflet-tooltip-left::before {
+    border-left-color: rgba(44, 62, 80, 0.95) !important;
+}
+
+.leaflet-tooltip-right::before {
+    border-right-color: rgba(44, 62, 80, 0.95) !important;
+}
+
+/* Leaflet popup customization */
+.leaflet-popup-content-wrapper {
+    border-radius: 6px;
+    padding: 0;
+}
+
+.leaflet-popup-content {
+    margin: 12px;
+    font-size: 14px;
+}
+
+.popup-title {
+    font-weight: 600;
+    font-size: 15px;
+    margin-bottom: 8px;
+    color: #2c3e50;
+}
+
+.popup-row {
+    margin: 4px 0;
+    color: #555;
+}
+
+.popup-label {
+    color: #7f8c8d;
+}
+
+/* Heatmap overlay on Leaflet */
+.leaflet-overlay-pane canvas {
+    opacity: 0.6;
+}
+
+/* Map elements */
+.country {
+    fill: #e8e8e8;
+    stroke: #bbb;
+    stroke-width: 0.5;
+    transition: fill 0.3s ease;
+}
+
+.country:hover {
+    fill: #d8d8d8;
+}
+
+.city-dot {
+    fill: #e74c3c;
+    stroke: white;
+    stroke-width: 1.5;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.city-dot:hover {
+    fill: #c0392b;
+    r: 8;
+}
+
+.airbnb-dot {
+    fill: #e74c3c;
+    opacity: 0.6;
+    stroke: none;
+    transition: all 0.2s ease;
+}
+
+.airbnb-dot:hover {
+    opacity: 1;
+    r: 4;
+}
+
+/* City labels */
+.city-label {
+    font-size: 12px;
+    font-weight: 500;
+    fill: #2c3e50;
+    pointer-events: none;
+    text-anchor: middle;
+}
+
+/* Tooltip */
+.tooltip {
+    position: absolute;
+    padding: 12px;
+    background: rgba(0, 0, 0, 0.9);
+    color: white;
+    border-radius: 6px;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    font-size: 14px;
+    max-width: 250px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+    z-index: 1000;
+}
+
+.tooltip.visible {
+    opacity: 1;
+}
+
+.tooltip-title {
+    font-weight: 600;
+    margin-bottom: 5px;
+    font-size: 15px;
+}
+
+.tooltip-content {
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+.tooltip-row {
+    margin: 3px 0;
+}
+
+.tooltip-label {
+    color: #bbb;
+}
+
+/* Heatmap */
+.heatmap-rect {
+    opacity: 0.6;
+}
+
+/* Loading state */
+.loading {
+    text-align: center;
+    padding: 50px;
+    font-size: 1.2rem;
+    color: #7f8c8d;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .container {
+        padding: 10px;
+    }
+
+    header h1 {
+        font-size: 1.8rem;
+    }
+
+    .subtitle {
+        font-size: 1rem;
+    }
+
+    .controls {
+        flex-direction: column;
+        gap: 10px;
+        align-items: stretch;
+    }
+
+    .toggle-container {
+        width: 100%;
+        justify-content: center;
+    }
+}
