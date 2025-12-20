@@ -1,0 +1,119 @@
+[
+  {
+    "country": "Germany",
+    "city": "Berlin",
+    "city_norm_rent": "berlin",
+    "rent_1bed_month": 1250.0,
+    "rent_house_detached_month": 2900.0,
+    "affordability_private_room_vs_1bed_rent": 2.0754902654867253,
+    "affordability_entire_home_vs_house_rent": 1.6767421240892926
+  },
+  {
+    "country": "Hungary",
+    "city": "Budapest",
+    "city_norm_rent": "budapest",
+    "rent_1bed_month": 890.0,
+    "rent_house_detached_month": 3000.0,
+    "affordability_private_room_vs_1bed_rent": 2.7531957664526483,
+    "affordability_entire_home_vs_house_rent": 1.0179174010794714
+  },
+  {
+    "country": "Ireland",
+    "city": "Dublin",
+    "city_norm_rent": "dublin",
+    "rent_1bed_month": 2050.0,
+    "rent_house_detached_month": 4500.0,
+    "affordability_private_room_vs_1bed_rent": 1.67199243781532,
+    "affordability_entire_home_vs_house_rent": 1.836213657876944
+  },
+  {
+    "country": "Switzerland",
+    "city": "Geneva",
+    "city_norm_rent": "genève",
+    "rent_1bed_month": 2200.0,
+    "rent_house_detached_month": 5800.0,
+    "affordability_private_room_vs_1bed_rent": 1.3515000000000001,
+    "affordability_entire_home_vs_house_rent": 1.0851671425433782
+  },
+  {
+    "country": "Netherlands",
+    "city": "Hague",
+    "city_norm_rent": "den haag",
+    "rent_1bed_month": 1200.0,
+    "rent_house_detached_month": 3500.0,
+    "affordability_private_room_vs_1bed_rent": 2.6787790697674416,
+    "affordability_entire_home_vs_house_rent": 28.800548810909692
+  },
+  {
+    "country": "United Kingdom",
+    "city": "London",
+    "city_norm_rent": "london",
+    "rent_1bed_month": 2200.0,
+    "rent_house_detached_month": 5650.0,
+    "affordability_private_room_vs_1bed_rent": 1.9418901065656042,
+    "affordability_entire_home_vs_house_rent": 1.7354133131072071
+  },
+  {
+    "country": "Spain",
+    "city": "Madrid",
+    "city_norm_rent": "madrid",
+    "rent_1bed_month": 1050.0,
+    "rent_house_detached_month": 3750.0,
+    "affordability_private_room_vs_1bed_rent": 2.4077683458058754,
+    "affordability_entire_home_vs_house_rent": 1.4798470105509964
+  },
+  {
+    "country": "Germany",
+    "city": "Munich",
+    "city_norm_rent": "münchen",
+    "rent_1bed_month": 1550.0,
+    "rent_house_detached_month": 3750.0,
+    "affordability_private_room_vs_1bed_rent": 3.002372122314744,
+    "affordability_entire_home_vs_house_rent": 2.5509682966147236
+  },
+  {
+    "country": "Norway",
+    "city": "Oslo",
+    "city_norm_rent": "oslo",
+    "rent_1bed_month": 1450.0,
+    "rent_house_detached_month": 3250.0,
+    "affordability_private_room_vs_1bed_rent": 1.6675261055351285,
+    "affordability_entire_home_vs_house_rent": 1.4494845524255389
+  },
+  {
+    "country": "Czech Republic",
+    "city": "Prague",
+    "city_norm_rent": "praha",
+    "rent_1bed_month": 1150.0,
+    "rent_house_detached_month": 2600.0,
+    "affordability_private_room_vs_1bed_rent": 2.6346542265348014,
+    "affordability_entire_home_vs_house_rent": 2.1900712687006716
+  },
+  {
+    "country": "Latvia",
+    "city": "Riga",
+    "city_norm_rent": "riga",
+    "rent_1bed_month": 740.0,
+    "rent_house_detached_month": 2350.0,
+    "affordability_private_room_vs_1bed_rent": 3.0093043863535667,
+    "affordability_entire_home_vs_house_rent": 0.8180191682556215
+  },
+  {
+    "country": "Sweden",
+    "city": "Stockholm",
+    "city_norm_rent": "stockholm",
+    "rent_1bed_month": 1700.0,
+    "rent_house_detached_month": 3100.0,
+    "affordability_private_room_vs_1bed_rent": 2.109857544757033,
+    "affordability_entire_home_vs_house_rent": 1.5001062839725678
+  },
+  {
+    "country": "Austria",
+    "city": "Vienna",
+    "city_norm_rent": "wien",
+    "rent_1bed_month": 1150.0,
+    "rent_house_detached_month": 3850.0,
+    "affordability_private_room_vs_1bed_rent": 2.3921100638491946,
+    "affordability_entire_home_vs_house_rent": 1.2910658504491104
+  }
+]

@@ -362,3 +362,85 @@ header h1 {
         justify-content: center;
     }
 }
+
+/* D3 chart panel */
+.panel {
+  padding: 10px 5px;
+}
+
+.panel h2 {
+  font-size: 1.4rem;
+  color: #2c3e50;
+  margin-bottom: 6px;
+}
+
+.panel-subtitle {
+  color: #7f8c8d;
+  margin-bottom: 12px;
+  line-height: 1.4;
+}
+
+.chart-controls {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+
+.chart {
+  width: 100%;
+  min-height: 520px;
+}
+
+.chart-note {
+  margin-top: 10px;
+  color: #7f8c8d;
+  font-size: 0.95rem;
+}
+
+/* D3 tooltip */
+.d3-tooltip {
+  position: absolute;
+  pointer-events: none;
+  background: rgba(44, 62, 80, 0.95);
+  color: white;
+  padding: 10px 12px;
+  border-radius: 6px;
+  font-size: 13px;
+  line-height: 1.4;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+  opacity: 0;
+  transition: opacity 0.15s ease;
+  z-index: 2000;
+}
+
+
+rect.bar {
+  fill: #e74c3c !important;
+}
+
+.toggle-label input[type="radio"]:checked + span {
+  color: #e74c3c;
+  font-weight: 600;
+}
+
+.toggle-label input[type="radio"]:focus + span {
+  outline: 1.5px solid #e74c3c;
+}
+
+.toggle-label span {
+  padding: 3px 9px;
+  border-radius: 4px;
+  transition: background 0.16s, color 0.16s;
+  cursor: pointer;
+}
+
+.toggle-label input[type="radio"]:checked + span {
+  background: rgba(231, 76, 60, 0.09);
+  border: 1.5px solid #e74c3c;
+}
+
+.toggle-label input[type="radio"] {
+  accent-color: #e74c3c;
+  margin-right: 4px;
+}

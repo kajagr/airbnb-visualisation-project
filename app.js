@@ -484,10 +484,207 @@ function renderVis1() {
 // VIS3 - Bar chart for housing comparison
 // ============================================================================
 
-function renderVis3() {
-    // VIS3: Bar chart comparing Airbnb density to residential housing
-    console.log('VIS3 rendering...');
+// ----------------------------
+// D3: Affordability chart
+// ----------------------------
+
+// Adjust path to wherever you serve the JSON
+const AFFORDABILITY_JSON_PATH = "./data/processed/cities_affordability_2023.json";
+
+function formatNumber(x, digits = 2) {
+  if (x === null || x === undefined || Number.isNaN(x)) return "N/A";
+  return Number(x).toFixed(digits);
 }
+
+function renderAffordabilityChart(rawData, metric = "private") {
+  const container = d3.select("#affordabilityChart");
+  container.selectAll("*").remove();
+
+  const note = d3.select("#affordabilityNote");
+
+  // Pick metric key
+  const metricKey =
+    metric === "private"
+      ? "affordability_private_room_vs_1bed_rent"
+      : "affordability_entire_home_vs_house_rent";
+
+  // Filter valid rows
+  const data = rawData
+    .filter(d => d[metricKey] !== null && d[metricKey] !== undefined && !Number.isNaN(d[metricKey]))
+    .map(d => ({
+      country: d.country,
+      city: d.city,
+      value: +d[metricKey],
+      rent1bed: d.rent_1bed_month,
+      rentHouse: d.rent_house_detached_month
+    }))
+    .sort((a, b) => b.value - a.value);
+
+  if (data.length === 0) {
+    container.append("div").attr("class", "loading")
+      .text("No affordability data available for the selected metric.");
+    note.text("");
+    return;
+  }
+
+  // Basic dimensions (robust)
+const bounds = container.node().getBoundingClientRect();
+
+// fallback če je container preozek ali 0 (npr. ob prvem renderju)
+const width = Math.max(640, bounds.width || 0);
+
+// levi margin naj se prilagodi širini (da ne naredi innerW negativnega)
+const margin = {
+  top: 20,
+  right: 30,
+  bottom: 30,
+  left: Math.min(170, Math.max(110, width * 0.28))
+};
+
+const rowH = 34;
+const height = margin.top + margin.bottom + data.length * rowH;
+
+// innerW mora biti pozitiven
+const innerW = Math.max(220, width - margin.left - margin.right);
+const innerH = height - margin.top - margin.bottom;
+
+const svg = container.append("svg")
+  .attr("width", width)
+  .attr("height", height);
+
+const g = svg.append("g")
+  .attr("transform", `translate(${margin.left},${margin.top})`);
+
+
+  // Scales
+  const xMax = d3.max(data, d => d.value) || 1;
+  const x = d3.scaleLinear()
+    .domain([0, xMax * 1.05])
+    .range([0, innerW]);
+
+  const y = d3.scaleBand()
+    .domain(data.map(d => d.city))
+    .range([0, innerH])
+    .padding(0.25);
+
+  // Axes
+  g.append("g")
+    .attr("transform", `translate(0,${innerH})`)
+    .call(d3.axisBottom(x).ticks(6));
+
+  g.append("g")
+    .call(d3.axisLeft(y));
+
+  // Tooltip
+  let tooltip = d3.select("body").selectAll(".d3-tooltip").data([null]);
+  tooltip = tooltip.enter().append("div")
+    .attr("class", "d3-tooltip")
+    .merge(tooltip);
+
+  function showTooltip(event, d) {
+    const label = metric === "private"
+      ? "Private room vs 1-bed rent"
+      : "Entire home vs detached house rent";
+
+    const rentLine = metric === "private"
+      ? `Rent (1-bed, month): €${formatNumber(d.rent1bed, 0)}`
+      : `Rent (detached house, month): €${formatNumber(d.rentHouse, 0)}`;
+
+    tooltip
+      .style("opacity", 1)
+      .html(`
+        <div style="font-weight:600; margin-bottom:6px;">${d.city}, ${d.country}</div>
+        <div>${label}: <b>${formatNumber(d.value, 2)}×</b></div>
+        <div>${rentLine}</div>
+      `)
+      .style("left", `${event.pageX + 14}px`)
+      .style("top", `${event.pageY + 10}px`);
+  }
+
+  function moveTooltip(event) {
+    tooltip
+      .style("left", `${event.pageX + 14}px`)
+      .style("top", `${event.pageY + 10}px`);
+  }
+
+  function hideTooltip() {
+    tooltip.style("opacity", 0);
+  }
+
+  // Bars
+  g.selectAll("rect.bar")
+    .data(data)
+    .enter()
+    .append("rect")
+    .attr("class", "bar")
+    .attr("x", 0)
+    .attr("y", d => y(d.city))
+    .attr("height", y.bandwidth())
+    .attr("width", d => Math.max(0, x(d.value)))
+    .attr("fill", "#3498db")
+    .on("mouseenter", showTooltip)
+    .on("mousemove", moveTooltip)
+    .on("mouseleave", hideTooltip);
+
+  // Value labels
+  g.selectAll("text.value")
+    .data(data)
+    .enter()
+    .append("text")
+    .attr("class", "value")
+    .attr("x", d => x(d.value) + 8)
+    .attr("y", d => y(d.city) + y.bandwidth() / 2)
+    .attr("dy", "0.35em")
+    .attr("fill", "#2c3e50")
+    .style("font-size", "12px")
+    .text(d => `${formatNumber(d.value, 2)}×`);
+
+  // Note
+  const missingCount = rawData.length - data.length;
+  note.text(
+    missingCount > 0
+      ? `Note: ${missingCount} locations were excluded because Eurostat rent data was not available (city-level coverage).`
+      : `Note: All available locations are shown.`
+  );
+}
+
+async function initAffordabilityVis() {
+  try {
+    const rawData = await d3.json(AFFORDABILITY_JSON_PATH);
+    console.log("Affordability rows:", rawData.length);
+
+    // First render
+    let metric = "private";
+    requestAnimationFrame(() => {
+      renderAffordabilityChart(rawData, metric);
+    });    
+
+    // Toggle
+    document.querySelectorAll('input[name="affMetric"]').forEach(radio => {
+      radio.addEventListener("change", (e) => {
+        metric = e.target.value;
+        renderAffordabilityChart(rawData, metric);
+      });
+    });
+
+    // Re-render on resize (debounced)
+    let t = null;
+    window.addEventListener("resize", () => {
+      clearTimeout(t);
+      t = setTimeout(() => renderAffordabilityChart(rawData, metric), 180);
+    });
+  } catch (err) {
+    console.error("Failed to load affordability data:", err);
+    const container = d3.select("#affordabilityChart");
+    container.selectAll("*").remove();
+    container.append("div").attr("class", "loading")
+      .text("Could not load affordability dataset. Check the JSON path and local server.");
+  }
+}
+
+// Call this once your page loads (or at bottom of app.js)
+initAffordabilityVis();
+
 
 // ============================================================================
 // START THE APPLICATION
