@@ -2,272 +2,325 @@
   {
     "country": "Netherlands",
     "city": "Amsterdam",
-    "filename": "amsterdam.csv"
+    "filename": "amsterdam.csv",
+    "currency": "EUR"
   },
   {
     "country": "Belgium",
     "city": "Antwerp",
-    "filename": "antwerp.csv"
+    "filename": "antwerp.csv",
+    "currency": "EUR"
   },
   {
     "country": "Greece",
     "city": "Athens",
-    "filename": "athens.csv"
+    "filename": "athens.csv",
+    "currency": "EUR"
   },
   {
     "country": "Spain",
     "city": "Barcelona",
-    "filename": "barcelona.csv"
+    "filename": "barcelona.csv",
+    "currency": "EUR"
   },
   {
     "country": "Italy",
     "city": "Bergamo",
-    "filename": "bergamo.csv"
+    "filename": "bergamo.csv",
+    "currency": "EUR"
   },
   {
     "country": "Germany",
     "city": "Berlin",
-    "filename": "berlin.csv"
+    "filename": "berlin.csv",
+    "currency": "EUR"
   },
   {
     "country": "Italy",
     "city": "Bologna",
-    "filename": "bologna.csv"
+    "filename": "bologna.csv",
+    "currency": "EUR"
   },
   {
     "country": "France",
     "city": "Bordeaux",
-    "filename": "bordeaux.csv"
+    "filename": "bordeaux.csv",
+    "currency": "EUR"
   },
   {
     "country": "United Kingdom",
     "city": "Bristol",
-    "filename": "bristol.csv"
+    "filename": "bristol.csv",
+    "currency": "GBP"
   },
   {
     "country": "Belgium",
     "city": "Brussels",
-    "filename": "brussles.csv"
+    "filename": "brussles.csv",
+    "currency": "EUR"
   },
   {
     "country": "Hungary",
     "city": "Budapest",
-    "filename": "budapest.csv"
+    "filename": "budapest.csv",
+    "currency": "HUF"
   },
   {
     "country": "Denmark",
     "city": "Copenhagen",
-    "filename": "copenhagen.csv"
+    "filename": "copenhagen.csv",
+    "currency": "DKK"
   },
   {
     "country": "Greece",
     "city": "Crete",
-    "filename": "crete.csv"
+    "filename": "crete.csv",
+    "currency": "EUR"
   },
   {
     "country": "Ireland",
     "city": "Dublin",
-    "filename": "dublin.csv"
+    "filename": "dublin.csv",
+    "currency": "EUR"
   },
   {
     "country": "United Kingdom",
     "city": "Edinburgh",
-    "filename": "edinburgh.csv"
+    "filename": "edinburgh.csv",
+    "currency": "GBP"
   },
   {
     "country": "Spain",
     "city": "Euskadi",
-    "filename": "euskadi.csv"
+    "filename": "euskadi.csv",
+    "currency": "EUR"
   },
   {
     "country": "Italy",
     "city": "Florence",
-    "filename": "florence.csv"
+    "filename": "florence.csv",
+    "currency": "EUR"
   },
   {
     "country": "Switzerland",
     "city": "Geneva",
-    "filename": "geneva.csv"
+    "filename": "geneva.csv",
+    "currency": "CHF"
   },
   {
     "country": "Belgium",
     "city": "Ghent",
-    "filename": "ghent.csv"
+    "filename": "ghent.csv",
+    "currency": "EUR"
   },
   {
     "country": "Spain",
     "city": "Girona",
-    "filename": "girona.csv"
+    "filename": "girona.csv",
+    "currency": "EUR"
   },
   {
     "country": "United Kingdom",
     "city": "Greater Manchester",
-    "filename": "greater_manchester.csv"
+    "filename": "greater_manchester.csv",
+    "currency": "GBP"
   },
   {
     "country": "Netherlands",
     "city": "Hague",
-    "filename": "hague.csv"
+    "filename": "hague.csv",
+    "currency": "EUR"
   },
   {
     "country": "Turkey",
     "city": "Istanbul",
-    "filename": "istanbul.csv"
+    "filename": "istanbul.csv",
+    "currency": "TRY"
   },
   {
     "country": "Portugal",
     "city": "Lisbon",
-    "filename": "lisbon.csv"
+    "filename": "lisbon.csv",
+    "currency": "EUR"
   },
   {
     "country": "United Kingdom",
     "city": "London",
-    "filename": "london.csv"
+    "filename": "london.csv",
+    "currency": "GBP"
   },
   {
     "country": "France",
     "city": "Lyon",
-    "filename": "lyon.csv"
+    "filename": "lyon.csv",
+    "currency": "EUR"
   },
   {
     "country": "Spain",
     "city": "Madrid",
-    "filename": "madrid.csv"
+    "filename": "madrid.csv",
+    "currency": "EUR"
   },
   {
     "country": "Spain",
     "city": "Malaga",
-    "filename": "malaga.csv"
+    "filename": "malaga.csv",
+    "currency": "EUR"
   },
   {
     "country": "Spain",
     "city": "Mallorca",
-    "filename": "mallorca.csv"
+    "filename": "mallorca.csv",
+    "currency": "EUR"
   },
   {
     "country": "Malta",
     "city": "Malta",
-    "filename": "malta.csv"
+    "filename": "malta.csv",
+    "currency": "EUR"
   },
   {
     "country": "Spain",
     "city": "Menorca",
-    "filename": "menorca.csv"
+    "filename": "menorca.csv",
+    "currency": "EUR"
   },
   {
     "country": "Italy",
     "city": "Milan",
-    "filename": "milan.csv"
+    "filename": "milan.csv",
+    "currency": "EUR"
   },
   {
     "country": "Germany",
     "city": "Munich",
-    "filename": "munich.csv"
+    "filename": "munich.csv",
+    "currency": "EUR"
   },
   {
     "country": "Italy",
     "city": "Naples",
-    "filename": "naples.csv"
+    "filename": "naples.csv",
+    "currency": "EUR"
   },
   {
     "country": "Norway",
     "city": "Oslo",
-    "filename": "oslo.csv"
+    "filename": "oslo.csv",
+    "currency": "NOK"
   },
   {
     "country": "France",
     "city": "Paris",
-    "filename": "paris.csv"
+    "filename": "paris.csv",
+    "currency": "EUR"
   },
   {
     "country": "Spain",
     "city": "Pays Basque",
-    "filename": "pays_basque.csv"
+    "filename": "pays_basque.csv",
+    "currency": "EUR"
   },
   {
     "country": "Portugal",
     "city": "Porto",
-    "filename": "porto.csv"
+    "filename": "porto.csv",
+    "currency": "EUR"
   },
   {
     "country": "Czech Republic",
     "city": "Prague",
-    "filename": "praque.csv"
+    "filename": "praque.csv",
+    "currency": "CZK"
   },
   {
     "country": "Italy",
     "city": "Puglia",
-    "filename": "puglia.csv"
+    "filename": "puglia.csv",
+    "currency": "EUR"
   },
   {
     "country": "Latvia",
     "city": "Riga",
-    "filename": "riga.csv"
+    "filename": "riga.csv",
+    "currency": "EUR"
   },
   {
     "country": "Italy",
     "city": "Rome",
-    "filename": "rome.csv"
+    "filename": "rome.csv",
+    "currency": "EUR"
   },
   {
     "country": "Netherlands",
     "city": "Rotterdam",
-    "filename": "rotterdam.csv"
+    "filename": "rotterdam.csv",
+    "currency": "EUR"
   },
   {
     "country": "Spain",
     "city": "Sevilla",
-    "filename": "sevilla.csv"
+    "filename": "sevilla.csv",
+    "currency": "EUR"
   },
   {
     "country": "Italy",
     "city": "Sicily",
-    "filename": "sicily.csv"
+    "filename": "sicily.csv",
+    "currency": "EUR"
   },
   {
     "country": "Greece",
     "city": "South Aegean",
-    "filename": "south_aegean.csv"
+    "filename": "south_aegean.csv",
+    "currency": "EUR"
   },
   {
     "country": "Sweden",
     "city": "Stockholm",
-    "filename": "stockholm.csv"
+    "filename": "stockholm.csv",
+    "currency": "SEK"
   },
   {
     "country": "Greece",
     "city": "Thessaloniki",
-    "filename": "thessaloniki.csv"
+    "filename": "thessaloniki.csv",
+    "currency": "EUR"
   },
   {
     "country": "Italy",
     "city": "Trentino",
-    "filename": "trentino.csv"
+    "filename": "trentino.csv",
+    "currency": "EUR"
   },
   {
     "country": "Spain",
     "city": "Valencia",
-    "filename": "valencia.csv"
+    "filename": "valencia.csv",
+    "currency": "EUR"
   },
   {
     "country": "Switzerland",
     "city": "Vaud",
-    "filename": "vaud.csv"
+    "filename": "vaud.csv",
+    "currency": "CHF"
   },
   {
     "country": "Italy",
     "city": "Venice",
-    "filename": "venice.csv"
+    "filename": "venice.csv",
+    "currency": "EUR"
   },
   {
     "country": "Austria",
     "city": "Vienna",
-    "filename": "vienna.csv"
+    "filename": "vienna.csv",
+    "currency": "EUR"
   },
   {
     "country": "Switzerland",
     "city": "Zurich",
-    "filename": "zurich.csv"
+    "filename": "zurich.csv",
+    "currency": "CHF"
   }
 ]
-

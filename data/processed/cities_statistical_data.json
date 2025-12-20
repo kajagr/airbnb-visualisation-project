@@ -4,6 +4,8 @@
     "country": "Netherlands",
     "city": "Amsterdam",
     "avg_price": 336.7851549199864,
+    "avg_price_entire_home": 336.1842453662842,
+    "avg_price_private_room": 175.72527472527472,
     "count": 10480,
     "lat": 52.36667920224869,
     "lng": 4.889447078032987
@@ -13,6 +15,8 @@
     "country": "Belgium",
     "city": "Antwerp",
     "avg_price": 282.70309098824555,
+    "avg_price_entire_home": 317.64248704663214,
+    "avg_price_private_room": 98.23529411764706,
     "count": 2654,
     "lat": 51.21492140205613,
     "lng": 4.413243099122416
@@ -22,6 +26,8 @@
     "country": "Greece",
     "city": "Athens",
     "avg_price": 122.89982098595428,
+    "avg_price_entire_home": 124.52179705425209,
+    "avg_price_private_room": 100.57543103448276,
     "count": 15584,
     "lat": 37.979571370793025,
     "lng": 23.731338434715244
@@ -31,6 +37,8 @@
     "country": "Spain",
     "city": "Barcelona",
     "avg_price": 187.3127127520293,
+    "avg_price_entire_home": 231.7343110179983,
+    "avg_price_private_room": 88.08143816330951,
     "count": 19410,
     "lat": 41.39224759492889,
     "lng": 2.166967798162028
@@ -40,6 +48,8 @@
     "country": "Italy",
     "city": "Bergamo",
     "avg_price": 195.96677260907254,
+    "avg_price_entire_home": 218.0535526776339,
+    "avg_price_private_room": 91.35445205479452,
     "count": 3719,
     "lat": 45.745191197676725,
     "lng": 9.77320425118757
@@ -49,6 +59,8 @@
     "country": "Germany",
     "city": "Berlin",
     "avg_price": 201.24039291882556,
+    "avg_price_entire_home": 162.08507199529828,
+    "avg_price_private_room": 86.4787610619469,
     "count": 14274,
     "lat": 52.50891786605505,
     "lng": 13.402306612844747
@@ -58,6 +70,8 @@
     "country": "Italy",
     "city": "Bologna",
     "avg_price": 197.20360009729993,
+    "avg_price_entire_home": 212.92535943713673,
+    "avg_price_private_room": 136.25912408759123,
     "count": 4642,
     "lat": 44.49761328193857,
     "lng": 11.3439995731971
@@ -67,15 +81,19 @@
     "country": "France",
     "city": "Bordeaux",
     "avg_price": 125.32582384661474,
+    "avg_price_entire_home": 143.86873947005668,
+    "avg_price_private_room": 58.164585698070375,
     "count": 12383,
     "lat": 44.84028170192081,
-    "lng": -0.5881860234841142
+    "lng": -0.5881860234841143
   },
   {
     "id": "bristol",
     "country": "United Kingdom",
     "city": "Bristol",
-    "avg_price": 136.32244897959183,
+    "avg_price": 159.49726530612242,
+    "avg_price_entire_home": 193.87411874999998,
+    "avg_price_private_room": 67.94594323873122,
     "count": 2845,
     "lat": 51.46112434191512,
     "lng": -2.5892361163154223
@@ -85,6 +103,8 @@
     "country": "Belgium",
     "city": "Brussels",
     "avg_price": 110.24381687423259,
+    "avg_price_entire_home": 122.57376660341556,
+    "avg_price_private_room": 75.46844993141289,
     "count": 6721,
     "lat": 50.83930562430423,
     "lng": 4.360591490640795
@@ -93,34 +113,42 @@
     "id": "budapest",
     "country": "Hungary",
     "city": "Budapest",
-    "avg_price": 38559.28245659497,
+    "avg_price": 100.25413438714692,
+    "avg_price_entire_home": 101.79174010794713,
+    "avg_price_private_room": 81.67814107142857,
     "count": 12391,
-    "lat": 47.49942481291279,
+    "lat": 47.499424812912785,
     "lng": 19.06309498535505
   },
   {
     "id": "copenhagen",
     "country": "Denmark",
     "city": "Copenhagen",
-    "avg_price": 1417.8901019449063,
+    "avg_price": 184.32571325283783,
+    "avg_price_entire_home": 193.35720647453613,
+    "avg_price_private_room": 86.47380122057542,
     "count": 22684,
     "lat": 55.68043496746815,
-    "lng": 12.55852040524861
+    "lng": 12.558520405248608
   },
   {
     "id": "crete",
     "country": "Greece",
     "city": "Crete",
     "avg_price": 260.9752635681175,
+    "avg_price_entire_home": 271.64967695620965,
+    "avg_price_private_room": 151.00839895013124,
     "count": 27582,
     "lat": 35.34954327017274,
-    "lng": 24.619409047956715
+    "lng": 24.61940904795672
   },
   {
     "id": "dublin",
     "country": "Ireland",
     "city": "Dublin",
     "avg_price": 204.49771167048056,
+    "avg_price_entire_home": 275.4320486815416,
+    "avg_price_private_room": 114.25281658404687,
     "count": 6945,
     "lat": 53.34841175099628,
     "lng": -6.2589271268633935
@@ -129,7 +157,9 @@
     "id": "edinburgh",
     "country": "United Kingdom",
     "city": "Edinburgh",
-    "avg_price": 300.5183756345178,
+    "avg_price": 351.6064994923858,
+    "avg_price_entire_home": 423.2026015801354,
+    "avg_price_private_room": 164.63671140939596,
     "count": 4936,
     "lat": 55.949997418852845,
     "lng": -3.1997331476170547
@@ -139,6 +169,8 @@
     "country": "Spain",
     "city": "Euskadi",
     "avg_price": 253.757371007371,
+    "avg_price_entire_home": 287.11767186840996,
+    "avg_price_private_room": 168.15917159763313,
     "count": 7151,
     "lat": 43.26020926836991,
     "lng": -2.513018800365393
@@ -148,15 +180,19 @@
     "country": "Italy",
     "city": "Florence",
     "avg_price": 263.7838017628472,
+    "avg_price_entire_home": 281.72140275471327,
+    "avg_price_private_room": 160.46554719166184,
     "count": 13043,
     "lat": 43.774274367847816,
-    "lng": 11.253361144574258
+    "lng": 11.253361144574257
   },
   {
     "id": "geneva",
     "country": "Switzerland",
     "city": "Geneva",
-    "avg_price": 166.05076392311483,
+    "avg_price": 176.01380975850174,
+    "avg_price_entire_home": 209.79898089171976,
+    "avg_price_private_room": 99.11,
     "count": 2719,
     "lat": 46.207896185778985,
     "lng": 6.143274443449236
@@ -166,6 +202,8 @@
     "country": "Belgium",
     "city": "Ghent",
     "avg_price": 127.49473684210527,
+    "avg_price_entire_home": 146.47512437810946,
+    "avg_price_private_room": 81.61349693251533,
     "count": 1392,
     "lat": 51.052106079528684,
     "lng": 3.723024990516915
@@ -175,6 +213,8 @@
     "country": "Spain",
     "city": "Girona",
     "avg_price": 470.6334434833317,
+    "avg_price_entire_home": 479.5183342735525,
+    "avg_price_private_room": 314.5532319391635,
     "count": 22456,
     "lat": 42.03058234197792,
     "lng": 3.010761529460474
@@ -183,7 +223,9 @@
     "id": "greater_manchester",
     "country": "United Kingdom",
     "city": "Greater Manchester",
-    "avg_price": 134.618561414203,
+    "avg_price": 157.5037168546175,
+    "avg_price_entire_home": 199.05448850833707,
+    "avg_price_private_room": 70.8422313253012,
     "count": 7418,
     "lat": 53.47945333928637,
     "lng": -2.255997928164812
@@ -193,6 +235,8 @@
     "country": "Netherlands",
     "city": "Hague",
     "avg_price": 2804.3619691119693,
+    "avg_price_entire_home": 3360.0640279394643,
+    "avg_price_private_room": 107.15116279069767,
     "count": 1481,
     "lat": 52.08636341320207,
     "lng": 4.287374357873367
@@ -201,7 +245,9 @@
     "id": "istanbul",
     "country": "Turkey",
     "city": "Istanbul",
-    "avg_price": 5083.7119375792145,
+    "avg_price": 147.42764618979723,
+    "avg_price_entire_home": 154.4461876175722,
+    "avg_price_private_room": 79.03316582260165,
     "count": 30051,
     "lat": 41.0296444687862,
     "lng": 28.972530504493143
@@ -211,6 +257,8 @@
     "country": "Portugal",
     "city": "Lisbon",
     "avg_price": 248.11604938271606,
+    "avg_price_entire_home": 216.2465316724718,
+    "avg_price_private_room": 113.0231412041997,
     "count": 25449,
     "lat": 38.762926485750114,
     "lng": -9.20784672010109
@@ -219,16 +267,20 @@
     "id": "london",
     "country": "United Kingdom",
     "city": "London",
-    "avg_price": 229.9169827154915,
+    "avg_price": 269.00286977712506,
+    "avg_price_entire_home": 326.836173968524,
+    "avg_price_private_room": 142.40527448147765,
     "count": 96871,
-    "lat": 51.50973982394052,
-    "lng": -0.12763797732931664
+    "lat": 51.509739823940535,
+    "lng": -0.12763797732931667
   },
   {
     "id": "lyon",
     "country": "France",
     "city": "Lyon",
     "avg_price": 106.44659132336858,
+    "avg_price_entire_home": 110.7248087431694,
+    "avg_price_private_room": 84.62080536912751,
     "count": 9691,
     "lat": 45.75916293403547,
     "lng": 4.840311298678142
@@ -238,6 +290,8 @@
     "country": "Spain",
     "city": "Madrid",
     "avg_price": 156.69144726428533,
+    "avg_price_entire_home": 184.98087631887455,
+    "avg_price_private_room": 84.27189210320563,
     "count": 25000,
     "lat": 40.42233365988343,
     "lng": -3.6937336612558154
@@ -247,24 +301,30 @@
     "country": "Spain",
     "city": "Malaga",
     "avg_price": 267.530457981325,
+    "avg_price_entire_home": 281.8720230634244,
+    "avg_price_private_room": 155.42089552238807,
     "count": 9710,
-    "lat": 36.72036051447983,
-    "lng": -4.42142373292378
+    "lat": 36.720360514479836,
+    "lng": -4.421423732923779
   },
   {
     "id": "mallorca",
     "country": "Spain",
     "city": "Mallorca",
     "avg_price": 1512.9691222466226,
+    "avg_price_entire_home": 1571.0863688104723,
+    "avg_price_private_room": 683.520474137931,
     "count": 15034,
-    "lat": 39.660471746251886,
-    "lng": 3.014040674375223
+    "lat": 39.6604717462519,
+    "lng": 3.0140406743752224
   },
   {
     "id": "malta",
     "country": "Malta",
     "city": "Malta",
     "avg_price": 140.95558739255014,
+    "avg_price_entire_home": 162.99410187667561,
+    "avg_price_private_room": 80.9889224572004,
     "count": 12570,
     "lat": 35.929515072349226,
     "lng": 14.447020443183382
@@ -274,6 +334,8 @@
     "country": "Spain",
     "city": "Menorca",
     "avg_price": 710.9130569306931,
+    "avg_price_entire_home": 726.5135135135135,
+    "avg_price_private_room": 231.71052631578948,
     "count": 3679,
     "lat": 39.94189407276041,
     "lng": 4.034464379186805
@@ -283,24 +345,30 @@
     "country": "Italy",
     "city": "Milan",
     "avg_price": 183.36410306556496,
+    "avg_price_entire_home": 190.39942401417812,
+    "avg_price_private_room": 132.1216274089936,
     "count": 22540,
-    "lat": 45.471611823321595,
-    "lng": 9.187812010355852
+    "lat": 45.47161182332159,
+    "lng": 9.18781201035585
   },
   {
     "id": "munich",
     "country": "Germany",
     "city": "Munich",
     "avg_price": 263.7360342673568,
+    "avg_price_entire_home": 318.8710370768404,
+    "avg_price_private_room": 155.12255965292843,
     "count": 8274,
     "lat": 48.13972249394121,
-    "lng": 11.562333262736121
+    "lng": 11.562333262736123
   },
   {
     "id": "naples",
     "country": "Italy",
     "city": "Naples",
     "avg_price": 183.2873866272938,
+    "avg_price_entire_home": 157.5155007304009,
+    "avg_price_private_room": 235.36064556176288,
     "count": 10669,
     "lat": 40.847530838974876,
     "lng": 14.250776233593239
@@ -309,7 +377,9 @@
     "id": "oslo",
     "country": "Norway",
     "city": "Oslo",
-    "avg_price": 1675.1407560611283,
+    "avg_price": 147.41238653337928,
+    "avg_price_entire_home": 157.02749317943338,
+    "avg_price_private_room": 80.59709510086455,
     "count": 12160,
     "lat": 59.9218402531551,
     "lng": 10.761276407829689
@@ -319,15 +389,19 @@
     "country": "France",
     "city": "Paris",
     "avg_price": null,
+    "avg_price_entire_home": null,
+    "avg_price_private_room": null,
     "count": 81853,
-    "lat": 48.86397956038535,
-    "lng": 2.3430398101808723
+    "lat": 48.863979560385346,
+    "lng": 2.343039810180872
   },
   {
     "id": "pays_basque",
     "country": "Spain",
     "city": "Pays Basque",
     "avg_price": 296.68683641830313,
+    "avg_price_entire_home": 303.11943891971106,
+    "avg_price_private_room": 85.25143403441683,
     "count": 12062,
     "lat": 43.424761604221814,
     "lng": -1.5225074515291452
@@ -337,24 +411,30 @@
     "country": "Portugal",
     "city": "Porto",
     "avg_price": 142.48620375985445,
+    "avg_price_entire_home": 151.4611426543648,
+    "avg_price_private_room": 92.21978639685216,
     "count": 14806,
-    "lat": 41.153494861549504,
-    "lng": -8.613221059007692
+    "lat": 41.15349486154951,
+    "lng": -8.613221059007694
   },
   {
     "id": "prague",
     "country": "Czech Republic",
     "city": "Prague",
-    "avg_price": 4385.323301074125,
+    "avg_price": 175.412932042965,
+    "avg_price_entire_home": 189.80617662072487,
+    "avg_price_private_room": 100.99507868383405,
     "count": 10593,
     "lat": 50.08113789482957,
-    "lng": 14.430494258101298
+    "lng": 14.430494258101302
   },
   {
     "id": "puglia",
     "country": "Italy",
     "city": "Puglia",
     "avg_price": 360.3657712648231,
+    "avg_price_entire_home": 383.7777179152725,
+    "avg_price_private_room": 256.16238973536485,
     "count": 48553,
     "lat": 40.55692893094761,
     "lng": 17.573680608477748
@@ -364,6 +444,8 @@
     "country": "Latvia",
     "city": "Riga",
     "avg_price": 64.5864468864469,
+    "avg_price_entire_home": 64.07816818002368,
+    "avg_price_private_room": 74.22950819672131,
     "count": 3205,
     "lat": 56.953757670152314,
     "lng": 24.11987027210806
@@ -373,6 +455,8 @@
     "country": "Italy",
     "city": "Rome",
     "avg_price": 197.32800023835063,
+    "avg_price_entire_home": 210.87852477910104,
+    "avg_price_private_room": 150.9405763132497,
     "count": 37652,
     "lat": 41.89124935009271,
     "lng": 12.4805140548737
@@ -382,8 +466,10 @@
     "country": "Netherlands",
     "city": "Rotterdam",
     "avg_price": 504.64814814814815,
+    "avg_price_entire_home": 171.64912280701753,
+    "avg_price_private_room": 1473.6081081081081,
     "count": 1351,
-    "lat": 51.921887706548546,
+    "lat": 51.92188770654853,
     "lng": 4.471153265818338
   },
   {
@@ -391,8 +477,10 @@
     "country": "Spain",
     "city": "Sevilla",
     "avg_price": 209.17913204062788,
+    "avg_price_entire_home": 222.61445968860798,
+    "avg_price_private_room": 124.51746931067045,
     "count": 8215,
-    "lat": 37.39012979888988,
+    "lat": 37.39012979888989,
     "lng": -5.990908884467543
   },
   {
@@ -400,15 +488,19 @@
     "country": "Italy",
     "city": "Sicily",
     "avg_price": 348.1354815086049,
+    "avg_price_entire_home": 380.8547363919314,
+    "avg_price_private_room": 210.3328111946533,
     "count": 57531,
     "lat": 37.640144909790486,
-    "lng": 14.138333426499246
+    "lng": 14.138333426499242
   },
   {
     "id": "south_aegean",
     "country": "Greece",
     "city": "South Aegean",
     "avg_price": 459.6895072935579,
+    "avg_price_entire_home": 484.8245200042905,
+    "avg_price_private_room": 295.7224052718287,
     "count": 37139,
     "lat": 36.877237670826524,
     "lng": 25.871290224463046
@@ -417,7 +509,9 @@
     "id": "stockholm",
     "country": "Sweden",
     "city": "Stockholm",
-    "avg_price": 1690.4730407523512,
+    "avg_price": 147.07115454545453,
+    "avg_price_entire_home": 155.01098267716534,
+    "avg_price_private_room": 119.55859420289855,
     "count": 4955,
     "lat": 59.31808828360755,
     "lng": 18.03005735613157
@@ -427,6 +521,8 @@
     "country": "Greece",
     "city": "Thessaloniki",
     "avg_price": 89.01574438527437,
+    "avg_price_entire_home": 88.79287410926366,
+    "avg_price_private_room": 97.74074074074075,
     "count": 4762,
     "lat": 40.631064733479555,
     "lng": 22.946971507464248
@@ -436,15 +532,19 @@
     "country": "Italy",
     "city": "Trentino",
     "avg_price": 731.1763541924314,
+    "avg_price_entire_home": 774.3980869320579,
+    "avg_price_private_room": 422.7722980062959,
     "count": 8919,
-    "lat": 46.136007908226226,
-    "lng": 11.107778600227643
+    "lat": 46.13600790822622,
+    "lng": 11.107778600227647
   },
   {
     "id": "valencia",
     "country": "Spain",
     "city": "Valencia",
     "avg_price": 164.11334002006018,
+    "avg_price_entire_home": 196.1398013750955,
+    "avg_price_private_room": 67.3093023255814,
     "count": 7844,
     "lat": 39.467440346907594,
     "lng": -0.36410234472275727
@@ -453,7 +553,9 @@
     "id": "vaud",
     "country": "Switzerland",
     "city": "Vaud",
-    "avg_price": 546758.6019343344,
+    "avg_price": 579564.1180503945,
+    "avg_price_entire_home": 234.1173287435456,
+    "avg_price_private_room": 2285566.13062249,
     "count": 5514,
     "lat": 46.482129532835955,
     "lng": 6.749677266463126
@@ -463,15 +565,19 @@
     "country": "Italy",
     "city": "Venice",
     "avg_price": 241.0160997143599,
+    "avg_price_entire_home": 263.6905807711079,
+    "avg_price_private_room": 151.4364973262032,
     "count": 8590,
-    "lat": 45.44656606265223,
-    "lng": 12.316001027602072
+    "lat": 45.44656606265224,
+    "lng": 12.31600102760207
   },
   {
     "id": "vienna",
     "country": "Austria",
     "city": "Vienna",
     "avg_price": 156.7276343877353,
+    "avg_price_entire_home": 165.68678414096917,
+    "avg_price_private_room": 91.69755244755245,
     "count": 14123,
     "lat": 48.20399285024554,
     "lng": 16.360793638717556
@@ -480,7 +586,9 @@
     "id": "zurich",
     "country": "Switzerland",
     "city": "Zurich",
-    "avg_price": 197.39073112265282,
+    "avg_price": 209.234174990012,
+    "avg_price_entire_home": 225.77559937727037,
+    "avg_price_private_room": 152.98585537918873,
     "count": 3301,
     "lat": 47.378681981270525,
     "lng": 8.53218345214269
