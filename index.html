@@ -61,8 +61,32 @@
                 <div id="cityMap" class="map-container hidden"></div>
             </div>
 
-            <!-- VIS 3: Teammate's visualization placeholder -->
-            <div id="vis3" class="vis-section">
+            <!-- VIS 3: Affordability (D3) -->
+            <div id="vis3" class="vis-section active">
+              <div class="panel">
+                <h2>Affordability Index</h2>
+                <p class="panel-subtitle">
+                  Ratio of Airbnb prices (nightly × 30) to monthly rents (Eurostat). 
+                </p>
+
+                <div class="chart-controls">
+                  <label class="toggle-label">
+                    <input type="radio" name="affMetric" value="private" checked>
+                    <span>Airbnb private room vs 1-bed rent</span>
+                  </label>
+                  <label class="toggle-label">
+                    <input type="radio" name="affMetric" value="entire">
+                    <span>Airbnb entire home vs detached house rent</span>
+                  </label>
+                </div>
+
+                <div id="affordabilityChart" class="chart"></div>
+                <div class="chart-note" id="affordabilityNote"></div>
+              </div>
+            </div>
+
+            <!-- VIS : Teammate's visualization placeholder -->
+            <div id="vis4" class="vis-section">
                 <!-- VIS3: Bar chart comparing Airbnb density goes here -->
             </div>
         </div>
