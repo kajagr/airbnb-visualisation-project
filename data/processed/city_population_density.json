@@ -1,0 +1,450 @@
+[
+  {
+    "id": "copenhagen",
+    "city": "Copenhagen",
+    "country": "Denmark",
+    "population": 559440.0,
+    "population_year": 2013,
+    "listings": 22684.0,
+    "airbnbs_per_1k": 40.55
+  },
+  {
+    "id": "florence",
+    "city": "Florence",
+    "country": "Italy",
+    "population": 362613.0,
+    "population_year": 2024,
+    "listings": 13043.0,
+    "airbnbs_per_1k": 35.97
+  },
+  {
+    "id": "mallorca",
+    "city": "Mallorca",
+    "country": "Spain",
+    "population": 430640.0,
+    "population_year": 2023,
+    "listings": 15034.0,
+    "airbnbs_per_1k": 34.91
+  },
+  {
+    "id": "venice",
+    "city": "Venice",
+    "country": "Italy",
+    "population": 250290.0,
+    "population_year": 2024,
+    "listings": 8590.0,
+    "airbnbs_per_1k": 34.32
+  },
+  {
+    "id": "malta",
+    "city": "Malta",
+    "country": "Malta",
+    "population": 475701.0,
+    "population_year": 2018,
+    "listings": 12570.0,
+    "airbnbs_per_1k": 26.42
+  },
+  {
+    "id": "oslo",
+    "city": "Oslo",
+    "country": "Norway",
+    "population": 699827.0,
+    "population_year": 2023,
+    "listings": 12160.0,
+    "airbnbs_per_1k": 17.38
+  },
+  {
+    "id": "malaga",
+    "city": "Malaga",
+    "country": "Spain",
+    "population": 587068.0,
+    "population_year": 2023,
+    "listings": 9710.0,
+    "airbnbs_per_1k": 16.54
+  },
+  {
+    "id": "bordeaux",
+    "city": "Bordeaux",
+    "country": "France",
+    "population": 773626.0,
+    "population_year": 2022,
+    "listings": 12383.0,
+    "airbnbs_per_1k": 16.01
+  },
+  {
+    "id": "thessaloniki",
+    "city": "Thessaloniki",
+    "country": "Greece",
+    "population": 315196.0,
+    "population_year": 2011,
+    "listings": 4762.0,
+    "airbnbs_per_1k": 15.11
+  },
+  {
+    "id": "bergamo",
+    "city": "Bergamo",
+    "country": "Italy",
+    "population": 252689.0,
+    "population_year": 2024,
+    "listings": 3719.0,
+    "airbnbs_per_1k": 14.72
+  },
+  {
+    "id": "porto",
+    "city": "Porto",
+    "country": "Portugal",
+    "population": 1008298.0,
+    "population_year": 2024,
+    "listings": 14806.0,
+    "airbnbs_per_1k": 14.68
+  },
+  {
+    "id": "rome",
+    "city": "Rome",
+    "country": "Italy",
+    "population": 2751747.0,
+    "population_year": 2024,
+    "listings": 37652.0,
+    "airbnbs_per_1k": 13.68
+  },
+  {
+    "id": "greater_manchester",
+    "city": "Greater Manchester",
+    "country": "United Kingdom",
+    "population": 546564.0,
+    "population_year": 2018,
+    "listings": 7418.0,
+    "airbnbs_per_1k": 13.57
+  },
+  {
+    "id": "lisbon",
+    "city": "Lisbon",
+    "country": "Portugal",
+    "population": 1935831.0,
+    "population_year": 2024,
+    "listings": 25449.0,
+    "airbnbs_per_1k": 13.15
+  },
+  {
+    "id": "bologna",
+    "city": "Bologna",
+    "country": "Italy",
+    "population": 390098.0,
+    "population_year": 2024,
+    "listings": 4642.0,
+    "airbnbs_per_1k": 11.9
+  },
+  {
+    "id": "london",
+    "city": "London",
+    "country": "United Kingdom",
+    "population": 8866541.0,
+    "population_year": 2018,
+    "listings": 96871.0,
+    "airbnbs_per_1k": 10.93
+  },
+  {
+    "id": "amsterdam",
+    "city": "Amsterdam",
+    "country": "Netherlands",
+    "population": 1073736.0,
+    "population_year": 2024,
+    "listings": 10480.0,
+    "airbnbs_per_1k": 9.76
+  },
+  {
+    "id": "edinburgh",
+    "city": "Edinburgh",
+    "country": "United Kingdom",
+    "population": 515855.0,
+    "population_year": 2018,
+    "listings": 4936.0,
+    "airbnbs_per_1k": 9.57
+  },
+  {
+    "id": "sevilla",
+    "city": "Sevilla",
+    "country": "Spain",
+    "population": 881124.0,
+    "population_year": 2023,
+    "listings": 8215.0,
+    "airbnbs_per_1k": 9.32
+  },
+  {
+    "id": "prague",
+    "city": "Prague",
+    "country": "Czech Republic",
+    "population": 1275406.0,
+    "population_year": 2022,
+    "listings": 10593.0,
+    "airbnbs_per_1k": 8.31
+  },
+  {
+    "id": "vienna",
+    "city": "Vienna",
+    "country": "Austria",
+    "population": 1766746.0,
+    "population_year": 2014,
+    "listings": 14123.0,
+    "airbnbs_per_1k": 7.99
+  },
+  {
+    "id": "paris",
+    "city": "Paris",
+    "country": "France",
+    "population": 10353710.0,
+    "population_year": 2022,
+    "listings": 81853.0,
+    "airbnbs_per_1k": 7.91
+  },
+  {
+    "id": "lyon",
+    "city": "Lyon",
+    "country": "France",
+    "population": 1296104.0,
+    "population_year": 2022,
+    "listings": 9691.0,
+    "airbnbs_per_1k": 7.48
+  },
+  {
+    "id": "budapest",
+    "city": "Budapest",
+    "country": "Hungary",
+    "population": 1671004.0,
+    "population_year": 2023,
+    "listings": 12391.0,
+    "airbnbs_per_1k": 7.42
+  },
+  {
+    "id": "milan",
+    "city": "Milan",
+    "country": "Italy",
+    "population": 3564724.0,
+    "population_year": 2024,
+    "listings": 22540.0,
+    "airbnbs_per_1k": 6.32
+  },
+  {
+    "id": "geneva",
+    "city": "Geneva",
+    "country": "Switzerland",
+    "population": 437406.0,
+    "population_year": 2025,
+    "listings": 2719.0,
+    "airbnbs_per_1k": 6.22
+  },
+  {
+    "id": "bristol",
+    "city": "Bristol",
+    "country": "United Kingdom",
+    "population": 461329.0,
+    "population_year": 2018,
+    "listings": 2845.0,
+    "airbnbs_per_1k": 6.17
+  },
+  {
+    "id": "athens",
+    "city": "Athens",
+    "country": "Greece",
+    "population": 2622404.0,
+    "population_year": 2013,
+    "listings": 15584.0,
+    "airbnbs_per_1k": 5.94
+  },
+  {
+    "id": "munich",
+    "city": "Munich",
+    "country": "Germany",
+    "population": 1488719.0,
+    "population_year": 2024,
+    "listings": 8274.0,
+    "airbnbs_per_1k": 5.56
+  },
+  {
+    "id": "valencia",
+    "city": "Valencia",
+    "country": "Spain",
+    "population": 1439503.0,
+    "population_year": 2023,
+    "listings": 7844.0,
+    "airbnbs_per_1k": 5.45
+  },
+  {
+    "id": "brussels",
+    "city": "Brussels",
+    "country": "Belgium",
+    "population": 1264371.0,
+    "population_year": 2024,
+    "listings": 6721.0,
+    "airbnbs_per_1k": 5.32
+  },
+  {
+    "id": "riga",
+    "city": "Riga",
+    "country": "Latvia",
+    "population": 601882.0,
+    "population_year": 2024,
+    "listings": 3205.0,
+    "airbnbs_per_1k": 5.32
+  },
+  {
+    "id": "dublin",
+    "city": "Dublin",
+    "country": "Ireland",
+    "population": 1325700.0,
+    "population_year": 2016,
+    "listings": 6945.0,
+    "airbnbs_per_1k": 5.24
+  },
+  {
+    "id": "barcelona",
+    "city": "Barcelona",
+    "country": "Spain",
+    "population": 3767382.0,
+    "population_year": 2023,
+    "listings": 19410.0,
+    "airbnbs_per_1k": 5.15
+  },
+  {
+    "id": "ghent",
+    "city": "Ghent",
+    "country": "Belgium",
+    "population": 270133.0,
+    "population_year": 2024,
+    "listings": 1392.0,
+    "airbnbs_per_1k": 5.15
+  },
+  {
+    "id": "madrid",
+    "city": "Madrid",
+    "country": "Spain",
+    "population": 5115272.0,
+    "population_year": 2023,
+    "listings": 25000.0,
+    "airbnbs_per_1k": 4.89
+  },
+  {
+    "id": "antwerp",
+    "city": "Antwerp",
+    "country": "Belgium",
+    "population": 547794.0,
+    "population_year": 2024,
+    "listings": 2654.0,
+    "airbnbs_per_1k": 4.84
+  },
+  {
+    "id": "zurich",
+    "city": "Zurich",
+    "country": "Switzerland",
+    "population": 725893.0,
+    "population_year": 2025,
+    "listings": 3301.0,
+    "airbnbs_per_1k": 4.55
+  },
+  {
+    "id": "berlin",
+    "city": "Berlin",
+    "country": "Germany",
+    "population": 3662381.0,
+    "population_year": 2024,
+    "listings": 14274.0,
+    "airbnbs_per_1k": 3.9
+  },
+  {
+    "id": "naples",
+    "city": "Naples",
+    "country": "Italy",
+    "population": 2983149.0,
+    "population_year": 2024,
+    "listings": 10669.0,
+    "airbnbs_per_1k": 3.58
+  },
+  {
+    "id": "stockholm",
+    "city": "Stockholm",
+    "country": "Sweden",
+    "population": 1626241.0,
+    "population_year": 2025,
+    "listings": 4955.0,
+    "airbnbs_per_1k": 3.05
+  },
+  {
+    "id": "rotterdam",
+    "city": "Rotterdam",
+    "country": "Netherlands",
+    "population": 1274944.0,
+    "population_year": 2024,
+    "listings": 1351.0,
+    "airbnbs_per_1k": 1.06
+  },
+  {
+  "id": "sicily",
+  "city": "Sicily*",
+  "country": "Italy",
+  "population": 4779000,
+  "population_year": 2023,
+  "population_source": "wikipedia",
+  "listings": 57531,
+  "airbnbs_per_1k": 12.04
+  },
+  {
+  "id": "crete",
+  "city": "Crete*",
+  "country": "Greece",
+  "population": 624408,
+  "population_year": 2024,
+  "population_source": "wikipedia",
+  "listings": 27582,
+  "airbnbs_per_1k": 44.17
+},
+{
+  "id": "menorca",
+  "city": "Menorca*",
+  "country": "Spain",
+  "population": 102477,
+  "population_year": 2024,
+  "population_source": "wikipedia",
+  "listings": 3679,
+  "airbnbs_per_1k": 35.91
+},
+{
+  "id": "puglia",
+  "city": "Puglia*",
+  "country": "Italy",
+  "population": 3874166,
+  "population_year": 2024,
+  "population_source": "wikipedia",
+  "listings": 48553,
+  "airbnbs_per_1k": 12.53
+},
+{
+  "id": "south_aegean",
+  "city": "South Aegean*",
+  "country": "Greece",
+  "population": 327820,
+  "population_year": 2024,
+  "population_source": "wikipedia",
+  "listings": 37139,
+  "airbnbs_per_1k": 113.29
+},
+{
+  "id": "trentino",
+  "city": "Trentino*",
+  "country": "Italy",
+  "population": 547000,
+  "population_year": 2024,
+  "population_source": "wikipedia",
+  "listings": 8919,
+  "airbnbs_per_1k": 16.3
+},
+  {
+    "id": "girona",
+    "city": "Girona*",
+    "country": "Spain",
+    "population": 104038.0,
+    "population_year": 2024,
+    "population_source": "wikipedia",
+    "listings": 22456.0,
+    "airbnbs_per_1k": 27.35
+  }
+]

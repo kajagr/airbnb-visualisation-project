@@ -685,6 +685,97 @@ async function initAffordabilityVis() {
 // Call this once your page loads (or at bottom of app.js)
 initAffordabilityVis();
 
+// ============================================================================
+// VIS4 - Bar chart for population density
+// ============================================================================
+
+// ----------------------------
+// D3: Population density chart
+// ----------------------------
+
+// Adjust path to wherever you serve the JSON
+const POP_DENSITY_JSON_PATH = "./data/processed/city_population_density.json";
+
+function renderDensityChart(data) {
+  const container = d3.select("#densityChart");
+  container.selectAll("*").remove();
+
+  const width = container.node().clientWidth || 600;
+  const barHeight = 24;
+  const margin = { top: 10, right: 120, bottom: 30, left: 260 };
+  const height = data.length * barHeight + margin.top + margin.bottom;
+
+  const svg = container.append("svg")
+    .attr("width", width)
+    .attr("height", height);
+
+  const x = d3.scaleLinear()
+    .domain([0, d3.max(data, d => d.airbnbs_per_1k) || 1])
+    .range([margin.left, width - margin.right]);
+
+  const y = d3.scaleBand()
+    .domain(data.map(d => `${d.city} (${d.country})`))
+    .range([margin.top, height - margin.bottom])
+    .padding(0.18);
+
+  const bars = svg.append("g");
+  bars.selectAll("rect")
+    .data(data)
+    .enter()
+    .append("rect")
+    .attr("x", margin.left)
+    .attr("y", d => y(`${d.city} (${d.country})`))
+    .attr("width", d => x(d.airbnbs_per_1k) - margin.left)
+    .attr("height", y.bandwidth())
+    .attr("fill", "#3498db");
+
+  bars.selectAll("text")
+    .data(data)
+    .enter()
+    .append("text")
+    .attr("x", d => x(d.airbnbs_per_1k) + 6)
+    .attr("y", d => y(`${d.city} (${d.country})`) + y.bandwidth() / 2 + 4)
+    .text(d => d.airbnbs_per_1k.toFixed(1))
+    .attr("fill", "#333")
+    .attr("font-size", 12);
+
+  svg.append("g")
+    .attr("transform", `translate(${margin.left},0)`)
+    .call(d3.axisLeft(y).tickSize(0))
+    .selectAll("text")
+    .attr("font-size", 11);
+
+  svg.append("g")
+    .attr("transform", `translate(0,${height - margin.bottom})`)
+    .call(d3.axisBottom(x).ticks(5))
+    .selectAll("text")
+    .attr("font-size", 11);
+
+  d3.select("#densityNote")
+  .text("* Population values marked with an asterisk are sourced from Wikipedia.");
+}
+
+async function initDensityVis() {
+  try {
+    let data = await d3.json(POP_DENSITY_JSON_PATH);
+
+    data = data.sort((a, b) => b.airbnbs_per_1k - a.airbnbs_per_1k);
+
+    data = data.slice(0, 20);
+
+    renderDensityChart(data);
+
+    let t = null;
+    window.addEventListener("resize", () => {
+      clearTimeout(t);
+      t = setTimeout(() => renderDensityChart(data), 180);
+    });
+  } catch (err) {
+    console.error("Failed to load population density data:", err);
+    d3.select("#densityChart").text("Could not load population density data.");
+  }
+}
+initDensityVis();
 
 // ============================================================================
 // START THE APPLICATION
