@@ -3,16 +3,23 @@
 // ============================================================================
 
 const state = {
-    currentView: 'europe', // 'europe' or 'city'
-    selectedCity: null,
-    viewMode: 'dots', // 'dots' or 'heatmap'
     citiesData: null,
-    currentCityListings: null,
-    europeMap: null,
-    cityMap: null,
-    cityMarkers: [],
-    airbnbMarkers: [],
-    heatmapLayer: null
+    act1Map: null,
+    cityMarkers: {},
+    currentStep: 'intro',
+    cityHeatmaps: {},
+    cityListings: {},
+    currentHeatmap: null,
+    pendingHeatmapTimer: null,
+    // Act 3
+    act3Map: null,
+    act3ViewMode: 'dots',
+    act3CityData: {},
+    act3Markers: [],
+    act3Heatmap: null,
+    // Act 4
+    densityData: null,
+    densityChartRendered: false
 };
 
 const config = {
@@ -22,33 +29,202 @@ const config = {
         minZoom: 3,
         maxZoom: 18
     },
-    city: {
-        zoom: 13,
-        minZoom: 11,
-        maxZoom: 18
+    cityZoom: {
+        zoom: 11,
+        duration: 2.4
     }
 };
+
+// Top 5 cities by listing count with their CSV filenames
+const TOP_CITIES = [
+    { id: 'london', name: 'London', step: 'city-1', filename: 'london.csv' },
+    { id: 'paris', name: 'Paris', step: 'city-2', filename: 'paris.csv' },
+    { id: 'rome', name: 'Rome', step: 'city-3', filename: 'rome.csv' },
+    { id: 'istanbul', name: 'Istanbul', step: 'city-4', filename: 'istanbul.csv' },
+    { id: 'madrid', name: 'Madrid', step: 'city-5', filename: 'madrid.csv' }
+];
+
+// Act 3 cities for deep dive
+const ACT3_CITIES = [
+    { id: 'barcelona', name: 'Barcelona', step: 'barcelona', filename: 'barcelona.csv' },
+    { id: 'lisbon', name: 'Lisbon', step: 'lisbon', filename: 'lisbon.csv' },
+    { id: 'amsterdam', name: 'Amsterdam', step: 'amsterdam', filename: 'amsterdam.csv' }
+];
 
 // ============================================================================
 // INITIALIZATION
 // ============================================================================
 
-function init() {
-    console.log('Initializing Airbnb visualization...');
+async function init() {
+    console.log('Initializing scrollytelling experience...');
     
-    // Set up event listeners
-    setupEventListeners();
+    // Set up basic event listeners first
+    setupProgressDots();
+    setupActObserver();
     
     // Initialize maps
-    initializeMaps();
+    initializeAct1Map();
+    initializeAct2();
+    initializeAct3(); 
+    initializeAct4();
+    initializeAct5();
     
-    // Load data
-    loadData();
+    // Load data (async)
+    await loadData();
+    
+    // Setup scroll listener AFTER data is loaded
+    setupScrollListener();
+    
+    console.log('✅ All initialization complete');
 }
 
-function initializeMaps() {
-    // Create Europe overview map
-    state.europeMap = L.map('europeMap', {
+// ============================================================================
+// PROGRESS DOTS NAVIGATION
+// ============================================================================
+
+function setupProgressDots() {
+    const dots = document.querySelectorAll('.progress-dot');
+    
+    dots.forEach(dot => {
+        dot.addEventListener('click', () => {
+            const actNumber = dot.dataset.act;
+            scrollToAct(actNumber);
+        });
+    });
+}
+
+function scrollToAct(actNumber) {
+    const actElement = document.getElementById(`act${actNumber}`);
+    if (actElement) {
+        actElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+}
+
+function updateProgressDots(currentAct) {
+    console.log('Updating dots to act:', currentAct); // DEBUG
+    const dots = document.querySelectorAll('.progress-dot');
+    dots.forEach(dot => {
+        const dotAct = dot.dataset.act;
+        if (dotAct === String(currentAct)) {
+            dot.classList.add('active');
+            console.log('✓ Activated dot:', dotAct); // DEBUG
+        } else {
+            dot.classList.remove('active');
+        }
+    });
+}
+
+function setupActObserver() {
+    console.log('Setting up Act observer...'); // DEBUG
+    
+    const actObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const actId = entry.target.id; // 'act1', 'act2', etc.
+                const actNumber = actId.replace('act', '');
+                console.log('👁️ Act visible:', actNumber); // DEBUG
+                updateProgressDots(actNumber);
+            }
+        });
+    }, {
+        threshold: 0.2, // Lower threshold for better detection
+        rootMargin: '-20% 0px -20% 0px'
+    });
+    
+    // Observe all acts
+    const acts = document.querySelectorAll('.act');
+    console.log('Found acts:', acts.length); // DEBUG
+    acts.forEach(act => {
+        console.log('Observing:', act.id); // DEBUG
+        actObserver.observe(act);
+    });
+}
+
+// ============================================================================
+// SCROLL DETECTION
+// ============================================================================
+
+function setupScrollListener() {
+    // Get both types of narrative steps
+    const narrativeSteps = document.querySelectorAll('.narrative-step, .narrative-step-full');
+    
+    console.log('Found narrative steps:', narrativeSteps.length);
+    
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            console.log('Entry:', entry.target.dataset.step, 'isIntersecting:', entry.isIntersecting, 'ratio:', entry.intersectionRatio);
+            
+            if (entry.isIntersecting) {
+                const stepName = entry.target.dataset.step;
+                if (stepName) {
+                    activateStep(stepName);
+                }
+            }
+        });
+    }, {
+        threshold: 0.3,  // Lower threshold - trigger when 30% visible
+        rootMargin: '-20% 0px -20% 0px'  // Less strict margins
+    });
+    
+    narrativeSteps.forEach(step => {
+        const stepName = step.dataset.step;
+        if (stepName) {
+            console.log('Observing step:', stepName);
+            observer.observe(step);
+        }
+    });
+    
+    console.log('Scroll listener set up for', narrativeSteps.length, 'narrative steps');
+}
+
+function activateStep(stepName) {
+    if (state.currentStep === stepName) return;
+    
+    console.log('Activating step:', stepName);
+    state.currentStep = stepName;
+    
+    // Update narrative step visual state
+    document.querySelectorAll('.narrative-step').forEach(step => {
+        if (step.dataset.step === stepName) {
+            step.classList.add('active');
+        } else {
+            step.classList.remove('active');
+        }
+    });
+    
+    // Update narrative overlay visual state (for Act 3)
+    document.querySelectorAll('.narrative-overlay').forEach(overlay => {
+        if (overlay.dataset.step === stepName) {
+            overlay.classList.add('active');
+        } else {
+            overlay.classList.remove('active');
+        }
+    });
+    
+    // Update progress dots based on which act this step belongs to
+    if (['intro', 'top-cities-intro', 'city-1', 'city-2', 'city-3', 'city-4', 'city-5', 'transition'].includes(stepName)) {
+        updateProgressDots(1);
+    } else if (stepName?.startsWith('affordability-') || stepName?.startsWith('private-room-') || stepName?.startsWith('entire-home-')) {
+        updateProgressDots(2);
+    } else if (stepName?.startsWith('concentration-') || stepName?.includes('barcelona') || stepName?.includes('lisbon') || stepName?.includes('amsterdam')) {
+        updateProgressDots(3);
+    } else if (stepName?.startsWith('impact-')) {
+        updateProgressDots(4);  // ← ADD THIS
+    } else if (stepName?.startsWith('response-')) {
+        updateProgressDots(5);  // ← ADD THIS
+    }
+    
+    // Update map based on step
+    updateMapForStep(stepName);
+}
+
+// ============================================================================
+// MAP INITIALIZATION
+// ============================================================================
+
+function initializeAct1Map() {
+    // Create map
+    state.act1Map = L.map('act1-map', {
         center: config.europe.center,
         zoom: config.europe.zoom,
         minZoom: config.europe.minZoom,
@@ -61,44 +237,9 @@ function initializeMaps() {
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
         subdomains: 'abcd',
         maxZoom: 20
-    }).addTo(state.europeMap);
+    }).addTo(state.act1Map);
 
-    // Create city detail map (initially hidden)
-    state.cityMap = L.map('cityMap', {
-        center: [51.5, -0.1],
-        zoom: config.city.zoom,
-        minZoom: config.city.minZoom,
-        maxZoom: config.city.maxZoom,
-        zoomControl: true
-    });
-
-    // Add base tile layer
-    L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
-        subdomains: 'abcd',
-        maxZoom: 20
-    }).addTo(state.cityMap);
-
-    console.log('Maps initialized');
-}
-
-// ============================================================================
-// EVENT LISTENERS
-// ============================================================================
-
-function setupEventListeners() {
-    // Back button
-    d3.select('#backButton').on('click', () => {
-        returnToEurope();
-    });
-
-    // View mode toggle
-    d3.selectAll('input[name="viewMode"]').on('change', function() {
-        state.viewMode = this.value;
-        if (state.currentView === 'city') {
-            updateCityVisualization();
-        }
-    });
+    console.log('Act 1 map initialized');
 }
 
 // ============================================================================
@@ -113,68 +254,86 @@ async function loadData() {
         state.citiesData = await d3.json('/data/processed/cities_statistical_data.json');
         console.log('Cities data loaded:', state.citiesData.length, 'cities');
         
-        // Render city markers on Europe map
+        // Render city markers on Act 1 map
         renderCityMarkers();
+        
+        // Preload top 5 cities data for smooth scrolling
+        await preloadTopCities();
         
     } catch (error) {
         console.error('Error loading data:', error);
-        showError('Error loading data. Check console for details.');
+        alert('Error loading data. Check console for details.');
     }
 }
 
-async function loadCityListings(cityId) {
-    try {
-        console.log('Loading listings for city:', cityId);
-        
-        // Find the filename for this city
-        const cityMapping = await d3.json('/data/raw/mapping_info/cities_data.json');
-        const cityInfo = cityMapping.find(c => c.city.toLowerCase().replace(' ', '_') === cityId);
-        
-        if (!cityInfo) {
-            throw new Error(`City ${cityId} not found in cities_data.json`);
+async function preloadTopCities() {
+    console.log('Preloading top cities data...');
+    
+    for (const cityConfig of TOP_CITIES) {
+        try {
+            const listings = await loadCityListings(cityConfig.id, cityConfig.filename);
+            if (listings && listings.length > 0) {
+                state.cityListings[cityConfig.id] = listings;
+                createCityHeatmap(cityConfig.id, listings);
+                console.log(`✓ Loaded ${cityConfig.name}: ${listings.length} listings`);
+            } else {
+                console.warn(`⚠ No listings data for ${cityConfig.name}`);
+            }
+        } catch (error) {
+            console.warn(`⚠ Could not load ${cityConfig.name} (this is OK for demo):`, error.message);
         }
-        
-        console.log('Loading CSV:', `/data/raw/listings/${cityInfo.filename}`);
+    }
+    
+    console.log('Top cities data loading complete');
+}
 
-        // Load the CSV file for this city
-        const listings = await d3.csv(`/data/raw/listings/${cityInfo.filename}`);
-        console.log('Listings loaded:', listings.length, 'entries');
+async function loadCityListings(cityId, filename) {
+    try {
+        const listings = await d3.csv(`/data/raw/listings/${filename}`);
         
-        // Convert price to number and clean data
+        // Clean and parse data
+        const validListings = [];
         listings.forEach(d => {
-            const priceStr = String(d.price || '0').replace(/[$,]/g, '');
-            d.price = parseFloat(priceStr);
-            if (isNaN(d.price)) d.price = null;
+            const lat = +d.latitude;
+            const lng = +d.longitude;
             
-            d.latitude = +d.latitude;
-            d.longitude = +d.longitude;
+            if (lat && lng && !isNaN(lat) && !isNaN(lng)) {
+                const priceStr = String(d.price || '0').replace(/[$,]/g, '');
+                const price = parseFloat(priceStr);
+                
+                validListings.push({
+                    latitude: lat,
+                    longitude: lng,
+                    price: isNaN(price) ? null : price,
+                    name: d.name,
+                    room_type: d.room_type
+                });
+            }
         });
-
-        console.log('Data cleaned and parsed');
         
-        return listings;
+        return validListings;
     } catch (error) {
-        console.error('Error loading city listings:', error);
+        // Don't throw - just return null so the demo works without all files
+        console.warn(`Note: ${filename} not found - zoom will work without heatmap`);
         return null;
     }
 }
 
 // ============================================================================
-// EUROPE MAP VIEW
+// CITY MARKERS
 // ============================================================================
 
 function renderCityMarkers() {
-    // Clear existing markers
-    state.cityMarkers.forEach(marker => marker.remove());
-    state.cityMarkers = [];
-
     state.citiesData.forEach(city => {
         // Calculate marker size based on number of listings
         const size = Math.sqrt(city.count / 1000) * 4 + 8;
         
+        // Check if this is a top city
+        const isTopCity = TOP_CITIES.some(tc => tc.id === city.id);
+        
         // Create custom icon
         const icon = L.divIcon({
-            className: 'city-marker',
+            className: isTopCity ? 'city-marker top-city' : 'city-marker',
             html: `<div style="width: ${size}px; height: ${size}px; border-radius: 50%;"></div>`,
             iconSize: [size, size],
             iconAnchor: [size/2, size/2]
@@ -182,16 +341,15 @@ function renderCityMarkers() {
 
         // Create marker
         const marker = L.marker([city.lat, city.lng], { icon })
-            .addTo(state.europeMap)
-            .on('click', () => zoomToCity(city));
+            .addTo(state.act1Map);
 
-        // Create tooltip that shows on hover
+        // Create tooltip
         const tooltipContent = `
             <div style="text-align: center;">
                 <strong style="font-size: 14px;">${city.city}</strong><br>
-                <span style="color: #7f8c8d; font-size: 12px;">${city.country}</span><br>
+                <span style="color: #b3b3b3; font-size: 12px;">${city.country}</span><br>
                 <span style="font-size: 13px;">${city.count.toLocaleString()} listings</span><br>
-                <span style="font-size: 13px;">€${city.avg_price != null ? city.avg_price.toFixed(2) : 'N/A'} avg</span>
+                ${city.avg_price != null ? `<span style="font-size: 13px;">€${city.avg_price.toFixed(2)} avg</span>` : ''}
             </div>
         `;
         
@@ -202,118 +360,740 @@ function renderCityMarkers() {
             className: 'custom-tooltip'
         });
 
-        state.cityMarkers.push(marker);
+        // Store reference if it's a top city
+        if (isTopCity) {
+            state.cityMarkers[city.id] = marker;
+        }
     });
 
-    // Add labels for major cities
-    const majorCities = state.citiesData.filter(d => d.count > 10000);
-    majorCities.forEach(city => {
-        const labelIcon = L.divIcon({
-            className: 'city-label-marker',
-            html: city.city,
-            iconSize: [100, 20],
-            iconAnchor: [50, -5]
-        });
-
-        const label = L.marker([city.lat, city.lng], { 
-            icon: labelIcon,
-            interactive: false
-        }).addTo(state.europeMap);
-
-        state.cityMarkers.push(label);
-    });
-
-    console.log('Rendered', state.cityMarkers.length, 'markers');
+    console.log('Rendered city markers');
 }
 
 // ============================================================================
-// CITY DETAIL VIEW
+// HEATMAP MANAGEMENT
 // ============================================================================
 
-async function zoomToCity(cityData) {
-    console.log('Zooming to city:', cityData.city);
+function createCityHeatmap(cityId, listings) {
+    // Prepare heatmap data [lat, lng, intensity]
+    const heatData = listings.map(d => {
+        const intensity = d.price ? Math.min(d.price / 200, 1) : 0.5;
+        return [d.latitude, d.longitude, intensity];
+    });
     
-    state.selectedCity = cityData;
-    state.currentView = 'city';
+    // Create heatmap layer (but don't add to map yet)
+    // Using the same settings as the original city visualization
+    const heatmapLayer = L.heatLayer(heatData, {
+        radius: 25,           // Size of each heat point
+        blur: 20,             // Blur amount for smooth gradient
+        maxZoom: 17,          // Max zoom where heatmap is visible
+        max: 1.0,             // Maximum intensity value
+        gradient: {           // Custom color gradient (blue → cyan → green → yellow → orange → red)
+            0.0: 'rgba(0,0,255,0)',
+            0.2: 'rgba(0,255,255,0.5)',
+            0.4: 'rgba(0,255,0,0.6)',
+            0.6: 'rgba(255,255,0,0.7)',
+            0.8: 'rgba(255,128,0,0.8)',
+            1.0: 'rgba(255,0,0,0.9)'
+        }
+    });
+    
+    state.cityHeatmaps[cityId] = heatmapLayer;
+}
 
-    // Load city listings
-    state.currentCityListings = await loadCityListings(cityData.id);
+function showCityHeatmap(cityId) {
+    // Hide current heatmap if any
+    if (state.currentHeatmap) {
+        state.currentHeatmap.remove();
+        state.currentHeatmap = null;
+    }
+    
+    // Show new heatmap
+    const heatmap = state.cityHeatmaps[cityId];
+    if (heatmap) {
+        heatmap.addTo(state.act1Map);
+        state.currentHeatmap = heatmap;
+    }
+}
 
-    if (!state.currentCityListings) {
-        alert('Failed to load city data');
-        returnToEurope();
-        return;
+function hideAllHeatmaps() {
+    // Cancel any pending heatmap timer first
+    if (state.pendingHeatmapTimer) {
+        clearTimeout(state.pendingHeatmapTimer);
+        state.pendingHeatmapTimer = null;
+    }
+    
+    // Remove the currently displayed heatmap
+    if (state.currentHeatmap) {
+        state.currentHeatmap.remove();
+        state.currentHeatmap = null;
+    }
+}
+
+// ============================================================================
+// MAP UPDATES BASED ON SCROLL
+// ============================================================================
+
+function updateMapForStep(stepName) {
+    console.log('Step changed to:', stepName); // DEBUG
+    
+    // ACT 1: Map steps
+    if (stepName?.startsWith('city-') || ['intro', 'top-cities-intro', 'transition'].includes(stepName)) {
+        // IMMEDIATELY hide any existing heatmap when changing steps
+        hideAllHeatmaps();
+        
+        // Reset all highlights and show all markers
+        resetAllHighlights();
+        
+        // Handle specific steps
+        switch(stepName) {
+            case 'intro':
+                // Show all of Europe
+                state.act1Map.flyTo(config.europe.center, config.europe.zoom, {
+                    duration: config.cityZoom.duration
+                });
+                break;
+                
+            case 'top-cities-intro':
+                // Maybe zoom in slightly
+                state.act1Map.flyTo(config.europe.center, config.europe.zoom + 0.5, {
+                    duration: config.cityZoom.duration
+                });
+                break;
+                
+            case 'city-1':
+            case 'city-2':
+            case 'city-3':
+            case 'city-4':
+            case 'city-5':
+                // Heatmap already hidden at the top - now zoom and show new one
+                zoomToCityWithHeatmap(stepName);
+                break;
+                
+            case 'transition':
+                // Reset to full view - make sure heatmap is really gone
+                hideAllHeatmaps(); // Extra safety
+                state.act1Map.flyTo(config.europe.center, config.europe.zoom, {
+                    duration: config.cityZoom.duration
+                });
+                break;
+
+        }
+    }
+    
+    // ACT 2: Affordability steps
+    if (stepName?.startsWith('affordability-') || stepName?.startsWith('private-room-') || stepName?.startsWith('entire-home-')) {
+        switch(stepName) {
+            case 'affordability-intro':
+                highlightAffordabilityCities([]);
+                // Trigger bar animation
+                setTimeout(() => {
+                    animateAffordabilityBars();
+                }, 100);
+                break;
+            
+            case 'private-room-intro':
+            case 'private-room-top':
+                switchChartMetric('private'); // Auto-switch to private room
+                if (stepName === 'private-room-top') {
+                    highlightAffordabilityCities(['Munich', 'Riga', 'Budapest']);
+                } else {
+                    highlightAffordabilityCities([]);
+                }
+                break;
+                
+            case 'entire-home-intro':
+            case 'entire-home-outlier':
+            case 'entire-home-top':
+                switchChartMetric('entire'); // Auto-switch to entire home
+                if (stepName === 'entire-home-outlier') {
+                    highlightAffordabilityCities(['Hague']);
+                } else if (stepName === 'entire-home-top') {
+                    highlightAffordabilityCities(['Munich', 'Prague', 'Berlin']);
+                } else {
+                    highlightAffordabilityCities([]);
+                }
+                break;
+                
+            case 'affordability-transition':
+                highlightAffordabilityCities([]);
+                break;
+        }
     }
 
-    // Switch map views
-    document.getElementById('europeMap').classList.add('hidden');
-    document.getElementById('cityMap').classList.remove('hidden');
+    // ACT 3: City concentration steps
+    if (stepName?.startsWith('concentration-') || stepName?.includes('barcelona') || stepName?.includes('lisbon') || stepName?.includes('amsterdam')) {
+        switch(stepName) {
+            // ACT 3: Concentration steps
+            case 'concentration-intro':
+                resetAct3View();
+                break;
+                
+            case 'barcelona-intro':
+                showAct3City('barcelona');
+                break;
+                
+            case 'lisbon-intro':
+                showAct3City('lisbon');
+                break;
+                
+            case 'amsterdam-intro':
+                showAct3City('amsterdam');
+                break;
+                
+            case 'concentration-transition':
+                resetAct3View();
+                break;
+        }
+    }
 
-    // Update UI
-    d3.select('#backButton').classed('hidden', false);
-    d3.select('#viewToggle').classed('hidden', false);
+    // ACT 4: Impact / Density steps
+    if (stepName?.startsWith('impact-')) {
+        switch(stepName) {
+            case 'impact-intro':
+                // Animate bars growing in on first card (with small delay to ensure chart is ready)
+                setTimeout(() => {
+                    animateDensityBars();
+                }, 100);
+                // Reset highlights
+                highlightDensityCities([]);
+                break;
+                
+            case 'impact-all':
+                // Animate bars growing in
+                animateDensityBars();
+                break;
+                
+            case 'impact-extremes':
+                // Highlight extreme cases
+                highlightDensityCities(['south_aegean', 'crete', 'venice', 'florence', 'mallorca', 'copenhagen']);
+                break;
+                
+            case 'impact-comparison':
+                // Highlight low-density cities
+                highlightDensityCities(['rotterdam', 'stockholm', 'berlin', 'naples']);
+                break;
+                
+            case 'impact-transition':
+                // Reset highlights
+                highlightDensityCities([]);
+                break;
+        }
+    }
 
-    // Center city map on the city
-    state.cityMap.setView([cityData.lat, cityData.lng], config.city.zoom);
+    // ACT 5: Response / Solutions steps (narrative-focused, no map updates)
+    if (stepName?.startsWith('response-')) {
+        // Act 5 is purely narrative, no map/chart updates needed
+        console.log('Act 5 step:', stepName);
+    }
+}
 
-    // Force map to recalculate size
+function zoomToCityWithHeatmap(stepName) {
+    // Safety check: return if data not loaded yet
+    if (!state.citiesData) return;
+    
+    const cityConfig = TOP_CITIES.find(c => c.step === stepName);
+    if (!cityConfig) return;
+    
+    // Get city data
+    const cityData = state.citiesData.find(c => c.id === cityConfig.id);
+    if (!cityData) return;
+    
+    // Cancel any pending heatmap timer
+    if (state.pendingHeatmapTimer) {
+        clearTimeout(state.pendingHeatmapTimer);
+        state.pendingHeatmapTimer = null;
+    }
+    
+    // Hide the marker for this city
+    const marker = state.cityMarkers[cityConfig.id];
+    if (marker) {
+        marker.setOpacity(0);
+    }
+    
+    // Zoom to city
+    state.act1Map.flyTo([cityData.lat, cityData.lng], config.cityZoom.zoom, {
+        duration: config.cityZoom.duration
+    });
+    
+    // Show heatmap AFTER zoom completes
+    // Store the timer so we can cancel it if needed
+    state.pendingHeatmapTimer = setTimeout(() => {
+        showCityHeatmap(cityConfig.id);
+        state.pendingHeatmapTimer = null; // Clear the reference
+    }, config.cityZoom.duration * 1000 + 100);
+}
+
+function resetAllHighlights() {
+    // Reset all markers: remove highlight AND make visible again
+    Object.values(state.cityMarkers).forEach(marker => {
+        const markerElement = marker.getElement();
+        if (markerElement) {
+            const markerDiv = markerElement.querySelector('div');
+            if (markerDiv) {
+                markerDiv.classList.remove('highlighted');
+            }
+        }
+        // Make marker visible again
+        marker.setOpacity(1);
+    });
+}
+
+// ============================================================================
+// ACT 2: AFFORDABILITY CHART
+// ============================================================================
+
+let affordabilityData = null;
+let currentMetric = 'private';
+let highlightedCities = [];
+let affordabilityBarsAnimated = false; // Track if bars have been animated
+
+async function initializeAct2() {
+    try {
+        console.log('Loading affordability data...');
+        affordabilityData = await d3.json('/data/processed/cities_affordability_2023.json');
+        console.log('Affordability data loaded:', affordabilityData.length, 'cities');
+        
+        // Render initial chart
+        renderAffordabilityChart('private');
+        
+        // Set up metric toggle
+        document.querySelectorAll('input[name="affMetric"]').forEach(radio => {
+            radio.addEventListener('change', (e) => {
+                const newMetric = e.target.value;
+                if (currentMetric === newMetric) return; // Already on this metric
+                
+                currentMetric = newMetric;
+                
+                // Fade out current chart
+                d3.select('#affordability-chart')
+                    .transition()
+                    .duration(300)
+                    .style('opacity', 0)
+                    .on('end', () => {
+                        // Re-render chart with new metric
+                        renderAffordabilityChart(currentMetric);
+                        
+                        // Re-apply highlights if any
+                        if (highlightedCities.length > 0) {
+                            highlightAffordabilityCities(highlightedCities);
+                        }
+                        
+                        // Fade in new chart
+                        d3.select('#affordability-chart')
+                            .style('opacity', 0)
+                            .transition()
+                            .duration(300)
+                            .style('opacity', 1);
+                    });
+            });
+        });
+        
+    } catch (error) {
+        console.error('Error loading affordability data:', error);
+    }
+}
+
+function renderAffordabilityChart(metric = 'private') {
+    const container = d3.select('#affordability-chart');
+    container.selectAll('*').remove();
+    
+    if (!affordabilityData) {
+        container.append('div')
+            .attr('class', 'loading')
+            .text('Loading affordability data...');
+        return;
+    }
+    
+    // Pick metric key
+    const metricKey = metric === 'private' 
+        ? 'affordability_private_room_vs_1bed_rent'
+        : 'affordability_entire_home_vs_house_rent';
+    
+    // Filter and sort data
+    const data = affordabilityData
+        .filter(d => d[metricKey] != null && !isNaN(d[metricKey]))
+        .map(d => ({
+            country: d.country,
+            city: d.city,
+            value: +d[metricKey],
+            rent1bed: d.rent_1bed_month,
+            rentHouse: d.rent_house_detached_month
+        }))
+        .sort((a, b) => b.value - a.value);
+    
+    if (data.length === 0) {
+        container.append('div')
+            .attr('class', 'loading')
+            .text('No data available for this metric.');
+        return;
+    }
+    
+    // Dimensions
+    const containerWidth = container.node().getBoundingClientRect().width || 700;
+    const margin = { top: 20, right: 80, bottom: 30, left: 160 };
+    const rowHeight = 36;
+    const height = data.length * rowHeight + margin.top + margin.bottom;
+    const width = containerWidth;
+    const innerWidth = width - margin.left - margin.right;
+    const innerHeight = height - margin.top - margin.bottom;
+    
+    // Create SVG
+    const svg = container.append('svg')
+        .attr('width', width)
+        .attr('height', height);
+    
+    const g = svg.append('g')
+        .attr('transform', `translate(${margin.left},${margin.top})`);
+    
+    // Scales
+    const xMax = d3.max(data, d => d.value) || 1;
+    const x = d3.scaleLinear()
+        .domain([0, xMax * 1.05])
+        .range([0, innerWidth]);
+    
+    const y = d3.scaleBand()
+        .domain(data.map(d => d.city))
+        .range([0, innerHeight])
+        .padding(0.2);
+    
+    // Axes
+    g.append('g')
+        .attr('class', 'axis')
+        .attr('transform', `translate(0,${innerHeight})`)
+        .call(d3.axisBottom(x).ticks(6).tickFormat(d => d.toFixed(1) + '×'));
+    
+    g.append('g')
+        .attr('class', 'axis')
+        .call(d3.axisLeft(y));
+    
+    // Tooltip
+    let tooltip = d3.select('body').selectAll('.d3-tooltip').data([null]);
+    tooltip = tooltip.enter().append('div')
+        .attr('class', 'd3-tooltip')
+        .merge(tooltip);
+    
+    function showTooltip(event, d) {
+        const label = metric === 'private'
+            ? 'Private room vs 1-bed rent'
+            : 'Entire home vs house rent';
+        
+        const rentLine = metric === 'private'
+            ? `1-bed rent/month: €${d.rent1bed?.toFixed(0) || 'N/A'}`
+            : `House rent/month: €${d.rentHouse?.toFixed(0) || 'N/A'}`;
+        
+        tooltip
+            .style('opacity', 1)
+            .html(`
+                <div style="font-weight:600; margin-bottom:6px;">${d.city}, ${d.country}</div>
+                <div>${label}: <b>${d.value.toFixed(2)}×</b></div>
+                <div style="font-size: 12px; margin-top: 4px; opacity: 0.9;">${rentLine}</div>
+            `)
+            .style('left', `${event.pageX + 14}px`)
+            .style('top', `${event.pageY + 10}px`);
+    }
+    
+    function moveTooltip(event) {
+        tooltip
+            .style('left', `${event.pageX + 14}px`)
+            .style('top', `${event.pageY + 10}px`);
+    }
+    
+    function hideTooltip() {
+        tooltip.style('opacity', 0);
+    }
+    
+    // Bars - start at width 0 for first animation, full width after that
+    g.selectAll('rect.bar')
+        .data(data)
+        .enter()
+        .append('rect')
+        .attr('class', affordabilityBarsAnimated ? 'bar visible' : 'bar') // Add visible class if already animated
+        .attr('data-city', d => d.city.toLowerCase())
+        .attr('data-target-width', d => x(d.value)) // Store target width
+        .attr('x', 0)
+        .attr('y', d => y(d.city))
+        .attr('height', y.bandwidth())
+        .attr('width', d => affordabilityBarsAnimated ? x(d.value) : 0) // Full width if animated, 0 if not
+        .style('opacity', affordabilityBarsAnimated ? 0.7 : 0) // Set initial opacity
+        .on('mouseenter', showTooltip)
+        .on('mousemove', moveTooltip)
+        .on('mouseleave', hideTooltip);
+    
+    // Value labels - show immediately if already animated
+    g.selectAll('text.value')
+        .data(data)
+        .enter()
+        .append('text')
+        .attr('class', 'value')
+        .attr('x', d => x(d.value) + 8)
+        .attr('y', d => y(d.city) + y.bandwidth() / 2)
+        .attr('dy', '0.35em')
+        .text(d => d.value.toFixed(2) + '×')
+        .style('opacity', affordabilityBarsAnimated ? 1 : 0); // Show if animated, hide if not
+}
+
+function animateAffordabilityBars() {
+    // Only animate once
+    if (affordabilityBarsAnimated) return;
+    
+    // Animate bars growing in from width 0 to target width
+    d3.selectAll('#affordability-chart rect.bar')
+        .transition()
+        .duration(800)
+        .delay((d, i) => i * 30)
+        .ease(d3.easeCubicOut)
+        .attr('width', function() { 
+            return this.getAttribute('data-target-width'); 
+        })
+        .style('opacity', 0.7) // Fade to normal opacity
+        .attr('class', 'bar visible');
+    
+    // Animate value labels fading in
+    d3.selectAll('#affordability-chart text.value')
+        .transition()
+        .duration(800)
+        .delay((d, i) => i * 30)
+        .style('opacity', 1);
+    
+    // Mark as animated
+    affordabilityBarsAnimated = true;
+}
+
+function highlightAffordabilityCities(cityNames) {
+    highlightedCities = cityNames;
+    
+    const allBars = d3.selectAll('#affordability-chart rect.bar');
+    const allLabels = d3.selectAll('#affordability-chart text.value');
+    
+    if (cityNames.length > 0) {
+        // Fade out non-highlighted bars
+        allBars
+            .classed('highlighted', false)
+            .classed('visible', true)
+            .transition()
+            .duration(400)
+            .style('opacity', 0.3);
+        
+        // Fade out non-highlighted labels
+        allLabels
+            .transition()
+            .duration(400)
+            .style('opacity', 0.4);
+        
+        // Highlight and fade in specified cities
+        cityNames.forEach(cityName => {
+            d3.selectAll(`#affordability-chart rect.bar[data-city="${cityName.toLowerCase()}"]`)
+                .classed('highlighted', true)
+                .transition()
+                .duration(400)
+                .style('opacity', 1);
+            
+            d3.selectAll(`#affordability-chart text.value`)
+                .filter(function(d) {
+                    return d && d.city.toLowerCase() === cityName.toLowerCase();
+                })
+                .transition()
+                .duration(400)
+                .style('opacity', 1);
+        });
+    } else {
+        // No highlights - fade all bars back to normal
+        allBars
+            .classed('highlighted', false)
+            .transition()
+            .duration(400)
+            .style('opacity', 0.7);
+        
+        allLabels
+            .transition()
+            .duration(400)
+            .style('opacity', 1);
+    }
+}
+
+function switchChartMetric(metric) {
+    if (currentMetric === metric) return; // Don't switch if already on this metric
+    
+    currentMetric = metric;
+    
+    // Update radio button
+    const radio = document.querySelector(`input[name="affMetric"][value="${metric}"]`);
+    if (radio) {
+        radio.checked = true;
+    }
+    
+    // Fade out current chart
+    d3.select('#affordability-chart')
+        .transition()
+        .duration(300)
+        .style('opacity', 0)
+        .on('end', () => {
+            // Re-render chart with new metric
+            renderAffordabilityChart(metric);
+            
+            // Fade in new chart
+            d3.select('#affordability-chart')
+                .style('opacity', 0)
+                .transition()
+                .duration(300)
+                .style('opacity', 1);
+        });
+}
+
+// ============================================================================
+// ACT 3: CITY CONCENTRATION
+// ============================================================================
+
+function initializeAct3() {
+    console.log('Initializing Act 3...');
+    
+    // Wait a bit for the DOM to be ready
     setTimeout(() => {
-        state.cityMap.invalidateSize();
-        updateCityVisualization();
+        // Create map
+        state.act3Map = L.map('act3-map', {
+            center: config.europe.center,
+            zoom: config.europe.zoom,
+            minZoom: 3,
+            maxZoom: 18,
+            zoomControl: true
+        });
+
+        // Add base tile layer
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+            subdomains: 'abcd',
+            maxZoom: 20
+        }).addTo(state.act3Map);
+
+        // Set up view mode toggle
+        document.querySelectorAll('input[name="act3ViewMode"]').forEach(radio => {
+            radio.addEventListener('change', (e) => {
+                state.act3ViewMode = e.target.value;
+                updateAct3Visualization();
+            });
+        });
+
+        // Preload Act 3 cities
+        preloadAct3Cities();
+        
+        // Add an Intersection Observer to invalidate map size when Act 3 becomes visible
+        const act3Section = document.getElementById('act3');
+        if (act3Section) {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting && state.act3Map) {
+                        console.log('Act 3 visible - invalidating map size');
+                        setTimeout(() => {
+                            state.act3Map.invalidateSize();
+                        }, 100);
+                    }
+                });
+            }, { threshold: 0.1 });
+            
+            observer.observe(act3Section);
+        }
+        
+        console.log('Act 3 map initialized');
     }, 100);
 }
 
-function updateCityVisualization() {
-    // Clear existing markers/layers
-    clearCityVisualization();
+async function preloadAct3Cities() {
+    console.log('Preloading Act 3 cities...');
+    
+    for (const cityConfig of ACT3_CITIES) {
+        try {
+            const listings = await loadCityListings(cityConfig.id, cityConfig.filename);
+            if (listings && listings.length > 0) {
+                state.act3CityData[cityConfig.id] = {
+                    listings: listings,
+                    config: cityConfig
+                };
+                console.log(`✓ Loaded ${cityConfig.name} for Act 3: ${listings.length} listings`);
+            }
+        } catch (error) {
+            console.warn(`⚠ Could not load ${cityConfig.name}:`, error.message);
+        }
+    }
+    
+    console.log('Act 3 cities loaded');
+}
 
-    if (state.viewMode === 'dots') {
-        renderAirbnbDots();
+function showAct3City(cityId) {
+    // Safety check: return if data not loaded yet
+    if (!state.citiesData) return;
+    
+    const cityData = state.act3CityData[cityId];
+    if (!cityData) {
+        console.warn(`No data for ${cityId}`);
+        return;
+    }
+    
+    // Get city center from main cities data
+    const cityInfo = state.citiesData.find(c => c.id === cityId);
+    if (!cityInfo) return;
+    
+    // Update stats panel
+    updateStatsPanel(cityInfo);
+    
+    // Zoom to city
+    state.act3Map.flyTo([cityInfo.lat, cityInfo.lng], 11, {
+        duration: 2.4
+    });
+    
+    // Show visualization after zoom
+    setTimeout(() => {
+        updateAct3Visualization();
+    }, 1500);
+}
+
+function updateAct3Visualization() {
+    // Clear existing visualization
+    clearAct3Visualization();
+    
+    // Find which city is currently active
+    const currentCity = getCurrentAct3City();
+    if (!currentCity) return;
+    
+    const cityData = state.act3CityData[currentCity];
+    if (!cityData) return;
+    
+    if (state.act3ViewMode === 'dots') {
+        renderAct3Dots(cityData.listings);
     } else {
-        renderAirbnbHeatmap();
+        renderAct3Heatmap(cityData.listings);
     }
 }
 
-function clearCityVisualization() {
-    // Remove all Airbnb markers
-    state.airbnbMarkers.forEach(marker => marker.remove());
-    state.airbnbMarkers = [];
-
-    // Remove heatmap layer
-    if (state.heatmapLayer) {
-        state.heatmapLayer.remove();
-        state.heatmapLayer = null;
-    }
+function getCurrentAct3City() {
+    const step = state.currentStep;
+    if (step.includes('barcelona')) return 'barcelona';
+    if (step.includes('lisbon')) return 'lisbon';
+    if (step.includes('amsterdam')) return 'amsterdam';
+    return null;
 }
 
-function renderAirbnbDots() {
-    console.log('Rendering Airbnb dots...');
-
-    const validListings = state.currentCityListings.filter(d => 
-        d.latitude && d.longitude && !isNaN(d.latitude) && !isNaN(d.longitude)
-    );
-
-    console.log('Valid listings:', validListings.length);
-
-    validListings.forEach(listing => {
-        // Create small circle marker
+function renderAct3Dots(listings) {
+    console.log('Rendering Act 3 dots:', listings.length);
+    
+    // Safety check: ensure map is ready
+    if (!state.act3Map || !state.act3Map.getContainer()) return;
+    
+    listings.forEach(listing => {
         const marker = L.circleMarker([listing.latitude, listing.longitude], {
-            radius: 3,
-            fillColor: '#e74c3c',
+            radius: 4,
+            fillColor: '#FF385C',
             color: 'white',
-            weight: 0.5,
+            weight: 1,
             opacity: 0.8,
             fillOpacity: 0.6
-        }).addTo(state.cityMap);
+        }).addTo(state.act3Map);
 
-        // Create tooltip that shows on hover
+        // Tooltip
         const tooltipContent = `
             <div style="min-width: 150px;">
                 <strong style="font-size: 13px;">${listing.name || 'Airbnb Listing'}</strong><br>
-                <span style="color: #7f8c8d; font-size: 11px;">Host: ${listing.host_name || 'N/A'}</span><br>
-                <span style="font-size: 12px; color: #e74c3c; font-weight: 600;">€${listing.price != null ? listing.price : 'N/A'}</span><br>
+                ${listing.price ? `<span style="font-size: 12px; color: #FF385C; font-weight: 600;">€${listing.price}</span><br>` : ''}
                 <span style="font-size: 11px;">${listing.room_type || 'N/A'}</span>
-                ${listing.neighbourhood ? `<br><span style="font-size: 11px; color: #7f8c8d;">${listing.neighbourhood}</span>` : ''}
             </div>
         `;
         
@@ -323,51 +1103,41 @@ function renderAirbnbDots() {
             className: 'custom-tooltip'
         });
 
-        // Add hover effect
         marker.on('mouseover', function() {
             this.setStyle({
-                radius: 5,
+                radius: 6,
                 fillOpacity: 1
             });
         });
         
         marker.on('mouseout', function() {
             this.setStyle({
-                radius: 3,
+                radius: 4,
                 fillOpacity: 0.6
             });
         });
 
-        state.airbnbMarkers.push(marker);
+        state.act3Markers.push(marker);
     });
-
-    console.log('Rendered', state.airbnbMarkers.length, 'Airbnb dots');
 }
 
-function renderAirbnbHeatmap() {
-    console.log('Rendering smooth heatmap...');
-
-    // Filter valid listings with coordinates
-    const validListings = state.currentCityListings.filter(d => 
-        d.latitude && d.longitude && !isNaN(d.latitude) && !isNaN(d.longitude)
-    );
-
-    console.log('Valid listings for heatmap:', validListings.length);
-
-    // Prepare data for heatmap [lat, lng, intensity]
-    // Use price as intensity if available, otherwise use constant
-    const heatData = validListings.map(d => {
+function renderAct3Heatmap(listings) {
+    console.log('Rendering Act 3 heatmap:', listings.length);
+    
+    // Safety check: ensure map is ready
+    if (!state.act3Map || !state.act3Map.getContainer()) return;
+    
+    const heatData = listings.map(d => {
         const intensity = d.price ? Math.min(d.price / 200, 1) : 0.5;
         return [d.latitude, d.longitude, intensity];
     });
-
-    // Create smooth heatmap layer using Leaflet.heat
-    state.heatmapLayer = L.heatLayer(heatData, {
-        radius: 25,           // Size of each heat point
-        blur: 20,             // Blur amount for smooth gradient
-        maxZoom: 17,          // Max zoom where heatmap is visible
-        max: 1.0,             // Maximum intensity value
-        gradient: {           // Custom color gradient (red theme)
+    
+    state.act3Heatmap = L.heatLayer(heatData, {
+        radius: 25,
+        blur: 20,
+        maxZoom: 17,
+        max: 1.0,
+        gradient: {
             0.0: 'rgba(0,0,255,0)',
             0.2: 'rgba(0,255,255,0.5)',
             0.4: 'rgba(0,255,0,0.6)',
@@ -375,413 +1145,311 @@ function renderAirbnbHeatmap() {
             0.8: 'rgba(255,128,0,0.8)',
             1.0: 'rgba(255,0,0,0.9)'
         }
-    }).addTo(state.cityMap);
-
-    console.log('Smooth heatmap rendered with', validListings.length, 'points');
+    }).addTo(state.act3Map);
 }
 
-function renderAggregatedDots() {
-    console.log('Using aggregated dots as heatmap fallback...');
+function clearAct3Visualization() {
+    // Remove all markers
+    state.act3Markers.forEach(marker => marker.remove());
+    state.act3Markers = [];
+    
+    // Remove heatmap
+    if (state.act3Heatmap) {
+        state.act3Heatmap.remove();
+        state.act3Heatmap = null;
+    }
+}
 
-    // Create a grid and aggregate listings
-    const gridSize = 0.005; // ~500m
-    const grid = {};
+function updateStatsPanel(cityInfo) {
+    document.getElementById('stat-city').textContent = cityInfo.city;
+    document.getElementById('stat-listings').textContent = cityInfo.count.toLocaleString();
+    document.getElementById('stat-price').textContent = cityInfo.avg_price 
+        ? `€${cityInfo.avg_price.toFixed(0)}`
+        : 'N/A';
+}
 
-    state.currentCityListings.forEach(listing => {
-        if (!listing.latitude || !listing.longitude) return;
-
-        const latKey = Math.floor(listing.latitude / gridSize);
-        const lngKey = Math.floor(listing.longitude / gridSize);
-        const key = `${latKey},${lngKey}`;
-
-        if (!grid[key]) {
-            grid[key] = {
-                lat: latKey * gridSize + gridSize / 2,
-                lng: lngKey * gridSize + gridSize / 2,
-                count: 0
-            };
-        }
-        grid[key].count++;
+function resetAct3View() {
+    clearAct3Visualization();
+    state.act3Map.flyTo(config.europe.center, config.europe.zoom, {
+        duration: 1.5
     });
+    
+    // Reset stats
+    document.getElementById('stat-city').textContent = '-';
+    document.getElementById('stat-listings').textContent = '-';
+    document.getElementById('stat-price').textContent = '-';
+}
 
-    // Find max count for scaling
-    const maxCount = Math.max(...Object.values(grid).map(cell => cell.count));
+// ============================================================================
+// ACT 4: POPULATION DENSITY / IMPACT
+// ============================================================================
 
-    // Render aggregated circles
-    Object.values(grid).forEach(cell => {
-        const intensity = cell.count / maxCount;
-        const radius = Math.sqrt(cell.count) * 2 + 5;
+let highlightedDensityCities = [];
+
+async function initializeAct4() {
+    try {
+        console.log('Loading density data...');
+        state.densityData = await d3.json('/data/processed/city_population_density.json');
+        console.log('Density data loaded:', state.densityData.length, 'cities');
         
-        const color = d3.interpolateReds(intensity);
-
-        const marker = L.circleMarker([cell.lat, cell.lng], {
-            radius: radius,
-            fillColor: color,
-            color: 'white',
-            weight: 1,
-            opacity: 0.8,
-            fillOpacity: 0.6
-        }).addTo(state.cityMap);
-
-        marker.bindPopup(`<div class="popup-title">${cell.count} Listings</div>`);
-
-        state.airbnbMarkers.push(marker);
-    });
-
-    console.log('Rendered', Object.keys(grid).length, 'aggregated cells');
+        // Sort by density (highest first)
+        state.densityData.sort((a, b) => b.airbnbs_per_1k - a.airbnbs_per_1k);
+        
+        // Take only top 20 cities
+        state.densityData = state.densityData.slice(0, 20);  // ← ADD THIS LINE
+        
+        console.log('Using top 20 cities for chart');
+        
+        // Render the chart (initially all bars hidden)
+        renderDensityChart();
+        
+    } catch (error) {
+        console.error('Error loading density data:', error);
+    }
 }
 
-// ============================================================================
-// NAVIGATION
-// ============================================================================
-
-function returnToEurope() {
-    console.log('Returning to Europe view');
+function renderDensityChart() {
+    const container = d3.select('#density-chart');
+    container.selectAll('*').remove();
     
-    state.selectedCity = null;
-    state.currentCityListings = null;
-    state.currentView = 'europe';
-
-    // Clear city visualization
-    clearCityVisualization();
-
-    // Switch map views
-    document.getElementById('cityMap').classList.add('hidden');
-    document.getElementById('europeMap').classList.remove('hidden');
-
-    // Update UI
-    d3.select('#backButton').classed('hidden', true);
-    d3.select('#viewToggle').classed('hidden', true);
-
-    // Reset Europe map view
-    state.europeMap.setView(config.europe.center, config.europe.zoom);
+    if (!state.densityData) {
+        container.append('div')
+            .attr('class', 'loading')
+            .text('Loading density data...');
+        return;
+    }
     
-    // Force map to recalculate size
-    setTimeout(() => {
-        state.europeMap.invalidateSize();
-    }, 100);
+    const data = state.densityData;
+    
+    // Dimensions
+    const containerWidth = container.node().getBoundingClientRect().width || 700;
+    const margin = { top: 10, right: 80, bottom: 30, left: 180 };
+    const barHeight = 24;
+    const height = data.length * barHeight + margin.top + margin.bottom;
+    const width = containerWidth;
+    const innerWidth = width - margin.left - margin.right;
+    const innerHeight = height - margin.top - margin.bottom;
+    
+    // Create SVG
+    const svg = container.append('svg')
+        .attr('width', width)
+        .attr('height', height);
+    
+    const g = svg.append('g')
+        .attr('transform', `translate(${margin.left},${margin.top})`);
+    
+    // Scales
+    const xMax = d3.max(data, d => d.airbnbs_per_1k) || 1;
+    const x = d3.scaleLinear()
+        .domain([0, xMax * 1.05])
+        .range([0, innerWidth]);
+    
+    const y = d3.scaleBand()
+        .domain(data.map(d => d.city))
+        .range([0, innerHeight])
+        .padding(0.15);
+    
+    // Axes
+    g.append('g')
+        .attr('class', 'axis')
+        .attr('transform', `translate(0,${innerHeight})`)
+        .call(d3.axisBottom(x).ticks(6));
+    
+    g.append('g')
+        .attr('class', 'axis')
+        .call(d3.axisLeft(y).tickSize(0));
+    
+    // Tooltip
+    let tooltip = d3.select('body').selectAll('.d3-tooltip').data([null]);
+    tooltip = tooltip.enter().append('div')
+        .attr('class', 'd3-tooltip')
+        .merge(tooltip);
+    
+    function showTooltip(event, d) {
+        tooltip
+            .style('opacity', 1)
+            .html(`
+                <div style="font-weight:600; margin-bottom:6px;">${d.city}, ${d.country}</div>
+                <div><b>${d.airbnbs_per_1k.toFixed(1)}</b> Airbnbs per 1,000 residents</div>
+                <div style="font-size: 12px; margin-top: 4px; opacity: 0.9;">
+                    ${d.listings.toLocaleString()} listings / ${d.population.toLocaleString()} population
+                </div>
+                ${d.population_source ? `<div style="font-size: 11px; margin-top: 4px; opacity: 0.7;">Population: ${d.population_source}</div>` : ''}
+            `)
+            .style('left', `${event.pageX + 14}px`)
+            .style('top', `${event.pageY + 10}px`);
+    }
+    
+    function moveTooltip(event) {
+        tooltip
+            .style('left', `${event.pageX + 14}px`)
+            .style('top', `${event.pageY + 10}px`);
+    }
+    
+    function hideTooltip() {
+        tooltip.style('opacity', 0);
+    }
+    
+    // Bars - start at width 0 for growth animation
+    g.selectAll('rect.density-bar')
+        .data(data)
+        .enter()
+        .append('rect')
+        .attr('class', 'density-bar')
+        .attr('data-city', d => d.id)
+        .attr('data-target-width', d => x(d.airbnbs_per_1k)) // Store target width
+        .attr('x', 0)
+        .attr('y', d => y(d.city))
+        .attr('height', y.bandwidth())
+        .attr('width', 0) // Start at 0 for animation
+        .style('opacity', 0) // Start hidden
+        .on('mouseenter', showTooltip)
+        .on('mousemove', moveTooltip)
+        .on('mouseleave', hideTooltip);
+    
+    // Value labels
+    g.selectAll('text.density-value')
+        .data(data)
+        .enter()
+        .append('text')
+        .attr('class', 'density-value')
+        .attr('x', d => x(d.airbnbs_per_1k) + 6)
+        .attr('y', d => y(d.city) + y.bandwidth() / 2)
+        .attr('dy', '0.35em')
+        .text(d => d.airbnbs_per_1k.toFixed(1))
+        .style('opacity', 0);
+    
+    // Add note about data sources
+    const noteText = data.some(d => d.population_source) 
+        ? "* Some population values are sourced from Wikipedia where Eurostat data was unavailable."
+        : "";
+    d3.select('#density-note').text(noteText);
+    
+    state.densityChartRendered = true;
+}
+
+function animateDensityBars() {
+    if (!state.densityChartRendered) return;
+    
+    // Animate bars growing in from width 0 to target width
+    d3.selectAll('#density-chart rect.density-bar')
+        .transition()
+        .duration(800)
+        .delay((d, i) => i * 30)
+        .ease(d3.easeCubicOut)
+        .attr('width', function() { 
+            return this.getAttribute('data-target-width'); 
+        })
+        .style('opacity', 0.7) // Fade to normal opacity
+        .attr('class', 'density-bar visible');
+    
+    // Animate value labels fading in
+    d3.selectAll('#density-chart text.density-value')
+        .transition()
+        .duration(800)
+        .delay((d, i) => i * 30)
+        .style('opacity', 1);
+}
+
+function highlightDensityCities(cityIds) {
+    highlightedDensityCities = cityIds;
+    
+    if (!state.densityChartRendered) return;
+    
+    const allBars = d3.selectAll('#density-chart rect.density-bar');
+    const allLabels = d3.selectAll('#density-chart text.density-value');
+    
+    if (cityIds.length > 0) {
+        // Fade out non-highlighted bars
+        allBars
+            .classed('highlighted', false)
+            .transition()
+            .duration(400)
+            .style('opacity', 0.3);
+        
+        // Fade out non-highlighted labels
+        allLabels
+            .transition()
+            .duration(400)
+            .style('opacity', 0.4);
+        
+        // Highlight and fade in specified cities
+        cityIds.forEach(cityId => {
+            d3.selectAll(`#density-chart rect.density-bar[data-city="${cityId}"]`)
+                .classed('highlighted', true)
+                .transition()
+                .duration(400)
+                .style('opacity', 1);
+            
+            d3.selectAll(`#density-chart text.density-value`)
+                .filter(function(d) {
+                    return d && d.id === cityId;
+                })
+                .transition()
+                .duration(400)
+                .style('opacity', 1);
+        });
+    } else {
+        // No highlights - fade all bars back to normal
+        allBars
+            .classed('highlighted', false)
+            .transition()
+            .duration(400)
+            .style('opacity', 0.7);
+        
+        allLabels
+            .transition()
+            .duration(400)
+            .style('opacity', 1);
+    }
 }
 
 // ============================================================================
-// UTILITY FUNCTIONS
+// ACT 5: THE RESPONSE / SOLUTIONS
 // ============================================================================
 
-function showError(message) {
-    console.error(message);
-    alert(message);
+function initializeAct5() {
+    console.log('Act 5 initialized (narrative-focused)');
+    
+    // Optional: Add subtle animations when policy cards come into view
+    setupPolicyCardAnimations();
 }
 
-// ============================================================================
-// VIS1 - Teammate's first visualization
-// ============================================================================
-
-function renderVis1() {
-    // VIS1: Your teammate can implement their visualization here
-    console.log('VIS1 rendering...');
-}
-
-// ============================================================================
-// VIS3 - Bar chart for housing comparison
-// ============================================================================
-
-// ----------------------------
-// D3: Affordability chart
-// ----------------------------
-
-// Adjust path to wherever you serve the JSON
-const AFFORDABILITY_JSON_PATH = "./data/processed/cities_affordability_2023.json";
-
-function formatNumber(x, digits = 2) {
-  if (x === null || x === undefined || Number.isNaN(x)) return "N/A";
-  return Number(x).toFixed(digits);
-}
-
-function renderAffordabilityChart(rawData, metric = "private") {
-  const container = d3.select("#affordabilityChart");
-  container.selectAll("*").remove();
-
-  const note = d3.select("#affordabilityNote");
-
-  // Pick metric key
-  const metricKey =
-    metric === "private"
-      ? "affordability_private_room_vs_1bed_rent"
-      : "affordability_entire_home_vs_house_rent";
-
-  // Filter valid rows
-  const data = rawData
-    .filter(d => d[metricKey] !== null && d[metricKey] !== undefined && !Number.isNaN(d[metricKey]))
-    .map(d => ({
-      country: d.country,
-      city: d.city,
-      value: +d[metricKey],
-      rent1bed: d.rent_1bed_month,
-      rentHouse: d.rent_house_detached_month
-    }))
-    .sort((a, b) => b.value - a.value);
-
-  if (data.length === 0) {
-    container.append("div").attr("class", "loading")
-      .text("No affordability data available for the selected metric.");
-    note.text("");
-    return;
-  }
-
-  // Basic dimensions (robust)
-const bounds = container.node().getBoundingClientRect();
-
-// fallback če je container preozek ali 0 (npr. ob prvem renderju)
-const width = Math.max(640, bounds.width || 0);
-
-// levi margin naj se prilagodi širini (da ne naredi innerW negativnega)
-const margin = {
-  top: 20,
-  right: 30,
-  bottom: 30,
-  left: Math.min(170, Math.max(110, width * 0.28))
-};
-
-const rowH = 34;
-const height = margin.top + margin.bottom + data.length * rowH;
-
-// innerW mora biti pozitiven
-const innerW = Math.max(220, width - margin.left - margin.right);
-const innerH = height - margin.top - margin.bottom;
-
-const svg = container.append("svg")
-  .attr("width", width)
-  .attr("height", height);
-
-const g = svg.append("g")
-  .attr("transform", `translate(${margin.left},${margin.top})`);
-
-
-  // Scales
-  const xMax = d3.max(data, d => d.value) || 1;
-  const x = d3.scaleLinear()
-    .domain([0, xMax * 1.05])
-    .range([0, innerW]);
-
-  const y = d3.scaleBand()
-    .domain(data.map(d => d.city))
-    .range([0, innerH])
-    .padding(0.25);
-
-  // Axes
-  g.append("g")
-    .attr("transform", `translate(0,${innerH})`)
-    .call(d3.axisBottom(x).ticks(6));
-
-  g.append("g")
-    .call(d3.axisLeft(y));
-
-  // Tooltip
-  let tooltip = d3.select("body").selectAll(".d3-tooltip").data([null]);
-  tooltip = tooltip.enter().append("div")
-    .attr("class", "d3-tooltip")
-    .merge(tooltip);
-
-  function showTooltip(event, d) {
-    const label = metric === "private"
-      ? "Private room vs 1-bed rent"
-      : "Entire home vs detached house rent";
-
-    const rentLine = metric === "private"
-      ? `Rent (1-bed, month): €${formatNumber(d.rent1bed, 0)}`
-      : `Rent (detached house, month): €${formatNumber(d.rentHouse, 0)}`;
-
-    tooltip
-      .style("opacity", 1)
-      .html(`
-        <div style="font-weight:600; margin-bottom:6px;">${d.city}, ${d.country}</div>
-        <div>${label}: <b>${formatNumber(d.value, 2)}×</b></div>
-        <div>${rentLine}</div>
-      `)
-      .style("left", `${event.pageX + 14}px`)
-      .style("top", `${event.pageY + 10}px`);
-  }
-
-  function moveTooltip(event) {
-    tooltip
-      .style("left", `${event.pageX + 14}px`)
-      .style("top", `${event.pageY + 10}px`);
-  }
-
-  function hideTooltip() {
-    tooltip.style("opacity", 0);
-  }
-
-  // Bars
-  g.selectAll("rect.bar")
-    .data(data)
-    .enter()
-    .append("rect")
-    .attr("class", "bar")
-    .attr("x", 0)
-    .attr("y", d => y(d.city))
-    .attr("height", y.bandwidth())
-    .attr("width", d => Math.max(0, x(d.value)))
-    .attr("fill", "#3498db")
-    .on("mouseenter", showTooltip)
-    .on("mousemove", moveTooltip)
-    .on("mouseleave", hideTooltip);
-
-  // Value labels
-  g.selectAll("text.value")
-    .data(data)
-    .enter()
-    .append("text")
-    .attr("class", "value")
-    .attr("x", d => x(d.value) + 8)
-    .attr("y", d => y(d.city) + y.bandwidth() / 2)
-    .attr("dy", "0.35em")
-    .attr("fill", "#2c3e50")
-    .style("font-size", "12px")
-    .text(d => `${formatNumber(d.value, 2)}×`);
-
-  // Note
-  const missingCount = rawData.length - data.length;
-  note.text(
-    missingCount > 0
-      ? `Note: ${missingCount} locations were excluded because Eurostat rent data was not available (city-level coverage).`
-      : `Note: All available locations are shown.`
-  );
-}
-
-async function initAffordabilityVis() {
-  try {
-    const rawData = await d3.json(AFFORDABILITY_JSON_PATH);
-    console.log("Affordability rows:", rawData.length);
-
-    // First render
-    let metric = "private";
-    requestAnimationFrame(() => {
-      renderAffordabilityChart(rawData, metric);
-    });    
-
-    // Toggle
-    document.querySelectorAll('input[name="affMetric"]').forEach(radio => {
-      radio.addEventListener("change", (e) => {
-        metric = e.target.value;
-        renderAffordabilityChart(rawData, metric);
-      });
+function setupPolicyCardAnimations() {
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.style.opacity = '0';
+                entry.target.style.transform = 'translateY(20px)';
+                
+                setTimeout(() => {
+                    entry.target.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }, 100);
+                
+                observer.unobserve(entry.target);
+            }
+        });
+    }, {
+        threshold: 0.2
     });
-
-    // Re-render on resize (debounced)
-    let t = null;
-    window.addEventListener("resize", () => {
-      clearTimeout(t);
-      t = setTimeout(() => renderAffordabilityChart(rawData, metric), 180);
+    
+    // Observe policy cards
+    document.querySelectorAll('.policy-card').forEach(card => {
+        observer.observe(card);
     });
-  } catch (err) {
-    console.error("Failed to load affordability data:", err);
-    const container = d3.select("#affordabilityChart");
-    container.selectAll("*").remove();
-    container.append("div").attr("class", "loading")
-      .text("Could not load affordability dataset. Check the JSON path and local server.");
-  }
-}
-
-// Call this once your page loads (or at bottom of app.js)
-initAffordabilityVis();
-
-// ============================================================================
-// VIS4 - Bar chart for population density
-// ============================================================================
-
-// ----------------------------
-// D3: Population density chart
-// ----------------------------
-
-// Adjust path to wherever you serve the JSON
-const POP_DENSITY_JSON_PATH = "./data/processed/city_population_density.json";
-
-function renderDensityChart(data) {
-  const container = d3.select("#densityChart");
-  container.selectAll("*").remove();
-
-  const width = container.node().clientWidth || 600;
-  const barHeight = 24;
-  const margin = { top: 10, right: 120, bottom: 30, left: 260 };
-  const height = data.length * barHeight + margin.top + margin.bottom;
-
-  const svg = container.append("svg")
-    .attr("width", width)
-    .attr("height", height);
-
-  const x = d3.scaleLinear()
-    .domain([0, d3.max(data, d => d.airbnbs_per_1k) || 1])
-    .range([margin.left, width - margin.right]);
-
-  const y = d3.scaleBand()
-    .domain(data.map(d => `${d.city} (${d.country})`))
-    .range([margin.top, height - margin.bottom])
-    .padding(0.18);
-
-  const bars = svg.append("g");
-  bars.selectAll("rect")
-    .data(data)
-    .enter()
-    .append("rect")
-    .attr("x", margin.left)
-    .attr("y", d => y(`${d.city} (${d.country})`))
-    .attr("width", d => x(d.airbnbs_per_1k) - margin.left)
-    .attr("height", y.bandwidth())
-    .attr("fill", "#3498db");
-
-  bars.selectAll("text")
-    .data(data)
-    .enter()
-    .append("text")
-    .attr("x", d => x(d.airbnbs_per_1k) + 6)
-    .attr("y", d => y(`${d.city} (${d.country})`) + y.bandwidth() / 2 + 4)
-    .text(d => d.airbnbs_per_1k.toFixed(1))
-    .attr("fill", "#333")
-    .attr("font-size", 12);
-
-  svg.append("g")
-    .attr("transform", `translate(${margin.left},0)`)
-    .call(d3.axisLeft(y).tickSize(0))
-    .selectAll("text")
-    .attr("font-size", 11);
-
-  svg.append("g")
-    .attr("transform", `translate(0,${height - margin.bottom})`)
-    .call(d3.axisBottom(x).ticks(5))
-    .selectAll("text")
-    .attr("font-size", 11);
-
-  d3.select("#densityNote")
-  .text("* Population values marked with an asterisk are sourced from Wikipedia.");
-}
-
-async function initDensityVis() {
-  try {
-    let data = await d3.json(POP_DENSITY_JSON_PATH);
-
-    data = data.sort((a, b) => b.airbnbs_per_1k - a.airbnbs_per_1k);
-
-    data = data.slice(0, 20);
-
-    renderDensityChart(data);
-
-    let t = null;
-    window.addEventListener("resize", () => {
-      clearTimeout(t);
-      t = setTimeout(() => renderDensityChart(data), 180);
+    
+    // Observe lesson cards
+    document.querySelectorAll('.lesson-card').forEach(card => {
+        observer.observe(card);
     });
-  } catch (err) {
-    console.error("Failed to load population density data:", err);
-    d3.select("#densityChart").text("Could not load population density data.");
-  }
 }
-initDensityVis();
 
 // ============================================================================
 // START THE APPLICATION
 // ============================================================================
 
-// Wait for DOM to be ready
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', init);
 } else {
