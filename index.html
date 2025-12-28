@@ -3,101 +3,344 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Airbnb Europe - Gentrification & Housing Pressure</title>
+    <title>Airbnb's Impact on European Housing</title>
     
     <!-- Leaflet CSS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    
+    <!-- Google Fonts - Airbnb uses Circular, we'll use similar -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     
     <link rel="stylesheet" href="style.css">
     
     <!-- Leaflet JS -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    
-    <!-- Leaflet.heat for smooth heatmap visualization -->
     <script src="https://unpkg.com/leaflet.heat@0.2.0/dist/leaflet-heat.js"></script>
     
-    <!-- D3 for visualizations -->
+    <!-- D3 -->
     <script src="https://d3js.org/d3.v7.min.js"></script>
+    
+    <!-- Scrollama -->
+    <script src="https://unpkg.com/intersection-observer@0.12.0/intersection-observer.js"></script>
+    <script src="https://unpkg.com/scrollama"></script>
 </head>
 <body>
-    <div class="container">
-        <!-- Header -->
-        <header>
-            <h1>Airbnb's Impact on European Cities</h1>
-            <p class="subtitle">Exploring gentrification and housing pressure across Europe</p>
-        </header>
+    <!-- Progress Indicator (fixed on right side) -->
+    <nav class="progress-nav">
+        <div class="progress-dot" data-act="0">
+            <span class="progress-label">Intro</span>
+        </div>
+        <div class="progress-dot" data-act="1">
+            <span class="progress-label">The Scale</span>
+        </div>
+        <div class="progress-dot" data-act="2">
+            <span class="progress-label">Economics</span>
+        </div>
+        <div class="progress-dot" data-act="3">
+            <span class="progress-label">Concentration</span>
+        </div>
+        <div class="progress-dot" data-act="4">
+            <span class="progress-label">Density</span>
+        </div>
+        <div class="progress-dot" data-act="5">
+            <span class="progress-label">Solutions</span>
+        </div>
+    </nav>
 
-        <!-- Controls -->
-        <div class="controls">
-            <button id="backButton" class="control-btn hidden">
-                <svg width="20" height="20" viewBox="0 0 20 20">
-                    <path d="M10 0 L0 10 L10 20 M0 10 L20 10" stroke="currentColor" stroke-width="2" fill="none"/>
-                </svg>
-                Back to Europe
-            </button>
+    <!-- HERO / INTRO -->
+    <section id="hero" class="hero" data-act="0">
+        <div class="hero-container">
+            <h1 class="hero-title">The Hidden Cost of Your Vacation Home</h1>
+            <p class="hero-subtitle">How Airbnb is reshaping European cities and displacing local communities</p>
+            <div class="hero-stat-grid">
+                <div class="hero-stat">
+                    <span class="stat-big">800,000+</span>
+                    <span class="stat-label">Airbnb listings across Europe</span>
+                </div>
+                <div class="hero-stat">
+                    <span class="stat-big">2.75×</span>
+                    <span class="stat-label">More profit than long-term rent</span>
+                </div>
+                <div class="hero-stat">
+                    <span class="stat-big">55</span>
+                    <span class="stat-label">Cities analyzed</span>
+                </div>
+            </div>
+            <p class="scroll-cue">Scroll to explore ↓</p>
+        </div>
+    </section>
+
+    <!-- ACT 1: THE SCALE - Side by Side Layout -->
+    <section id="act1" class="act-section side-by-side" data-act="1">
+        <div class="viz-sticky">
+            <div id="europeMap" class="map-container"></div>
+        </div>
+        
+        <div class="story-scroll">
+            <div class="step" data-step="0">
+                <h2>Act 1: The Scale</h2>
+                <h3>A Europe-Wide Transformation</h3>
+                <p>From coastal resorts to historic capitals, short-term rentals have fundamentally altered the housing landscape across Europe.</p>
+                <div class="stat-highlight">
+                    <span class="stat-number">800,000+</span>
+                    <span class="stat-text">Airbnb listings competing with local housing</span>
+                </div>
+            </div>
             
-            <div class="toggle-container hidden" id="viewToggle">
-                <label class="toggle-label">
-                    <input type="radio" name="viewMode" value="dots" checked>
-                    <span>Dots</span>
-                </label>
-                <label class="toggle-label">
-                    <input type="radio" name="viewMode" value="heatmap">
-                    <span>Heatmap</span>
-                </label>
+            <div class="step" data-step="1">
+                <h3>The Giants</h3>
+                <p>London leads with <strong>96,871 listings</strong>. Paris follows with 81,853. Barcelona hosts 19,410.</p>
+                <div class="stat-highlight">
+                    <span class="stat-number">258,134</span>
+                    <span class="stat-text">listings in just three cities</span>
+                </div>
+                <p class="insight">That's equivalent to removing housing for the entire population of cities like Gent or Padova.</p>
+            </div>
+            
+            <div class="step" data-step="2">
+                <h3>Coastal and Capital Cities</h3>
+                <p>The pattern is clear: tourist destinations bear the heaviest burden. Mediterranean coasts, island regions, and European capitals show the highest concentrations.</p>
+            </div>
+            
+            <div class="step" data-step="3">
+                <h3>But Scale Alone Doesn't Tell the Full Story</h3>
+                <p>A city with 10,000 Airbnbs might seem manageable—unless that city only has 200,000 residents.</p>
+                <p class="transition-text">The real question is: <em>relative to what?</em></p>
             </div>
         </div>
+    </section>
 
-        <!-- Main visualization container -->
-        <div class="visualization-container">
-            <!-- VIS 1: Teammate's visualization placeholder -->
-            <div id="vis1" class="vis-section">
-                <!-- VIS1: Your teammate's first visualization goes here -->
+    <!-- ACT 2: THE ECONOMICS - Side by Side FLIPPED (text left, chart right) -->
+    <section id="act2" class="act-section side-by-side flipped" data-act="2">
+        <div class="story-scroll">
+            <div class="step" data-step="0">
+                <h2>Act 2: The Economics</h2>
+                <h3>Why Landlords Choose Tourists Over Locals</h3>
+                <p>The decision is purely financial. Compare monthly rent to 30 nights of Airbnb income.</p>
+                <p class="insight">The gap is staggering.</p>
             </div>
-
-            <!-- VIS 2: Europe Map & City Detail (your visualization) -->
-            <div id="vis2" class="vis-section active">
-                <div id="europeMap" class="map-container"></div>
-                <div id="cityMap" class="map-container hidden"></div>
-            </div>
-
-            <!-- VIS 3: Affordability (D3) -->
-            <div id="vis3" class="vis-section active">
-              <div class="panel">
-                <h2>Affordability Index</h2>
-                <p class="panel-subtitle">
-                  Ratio of Airbnb prices (nightly × 30) to monthly rents (Eurostat). 
-                </p>
-
-                <div class="chart-controls">
-                  <label class="toggle-label">
-                    <input type="radio" name="affMetric" value="private" checked>
-                    <span>Airbnb private room vs 1-bed rent</span>
-                  </label>
-                  <label class="toggle-label">
-                    <input type="radio" name="affMetric" value="entire">
-                    <span>Airbnb entire home vs detached house rent</span>
-                  </label>
+            
+            <div class="step" data-step="1">
+                <h3>Budapest: The Extreme Case</h3>
+                <div class="stat-comparison">
+                    <div class="comp-item">
+                        <span class="comp-label">Long-term rent</span>
+                        <span class="comp-value">€890/month</span>
+                    </div>
+                    <div class="comp-arrow">→</div>
+                    <div class="comp-item highlight">
+                        <span class="comp-label">Airbnb income</span>
+                        <span class="comp-value">€2,450/month</span>
+                    </div>
                 </div>
-
+                <div class="stat-highlight">
+                    <span class="stat-number">€21,000</span>
+                    <span class="stat-text">extra per year. Would you resist?</span>
+                </div>
+            </div>
+            
+            <div class="step" data-step="2">
+                <h3>The Pattern Repeats</h3>
+                <ul class="city-list">
+                    <li><strong>Munich:</strong> 3.0× multiplier (€26,000 extra/year)</li>
+                    <li><strong>Amsterdam:</strong> 2.7× multiplier (€19,200 extra/year)</li>
+                    <li><strong>Prague:</strong> 2.6× multiplier (€18,000 extra/year)</li>
+                </ul>
+                <p class="insight">The economic incentive to convert housing is overwhelming across major cities.</p>
+            </div>
+        </div>
+        
+        <div class="viz-sticky">
+            <div class="panel">
+                <h3 class="panel-title">Economic Incentive</h3>
+                <p class="panel-subtitle">How much more profitable is Airbnb than renting to locals?</p>
+                <div class="chart-controls">
+                    <label class="toggle-label">
+                        <input type="radio" name="affMetric" value="private" checked>
+                        <span>Private room</span>
+                    </label>
+                    <label class="toggle-label">
+                        <input type="radio" name="affMetric" value="entire">
+                        <span>Entire home</span>
+                    </label>
+                </div>
                 <div id="affordabilityChart" class="chart"></div>
                 <div class="chart-note" id="affordabilityNote"></div>
-              </div>
             </div>
+        </div>
+    </section>
 
-            <!-- VIS 4: Teammate's visualization placeholder -->
-            <div id="vis4" class="vis-section active">
-                <div class="panel">
-                    <h2>Airbnb Density (listings per 1k residents)</h2>
-                    <p class="panel-subtitle">Top cities/regions by Airbnb listings per 1,000 residents.</p>
-                    <div id="densityChart" class="chart"></div>
-                    <div class="chart-note" id="densityNote"></div>
+    <!-- ACT 3: CITY CONCENTRATION - Full Width with Tabs -->
+    <section id="act3" class="act-section full-width" data-act="3">
+        <div class="section-intro">
+            <h2>Act 3: Where It Concentrates</h2>
+            <p class="section-subtitle">Explore three cities at different stages of the Airbnb phenomenon</p>
+        </div>
+        
+        <!-- City Tabs -->
+        <div class="city-tabs">
+            <button class="city-tab active" data-city="barcelona">
+                <span class="tab-title">Barcelona</span>
+                <span class="tab-subtitle">Classic Gentrification</span>
+            </button>
+            <button class="city-tab" data-city="lisbon">
+                <span class="tab-title">Lisbon</span>
+                <span class="tab-subtitle">Rapid Transformation</span>
+            </button>
+            <button class="city-tab" data-city="amsterdam">
+                <span class="tab-title">Amsterdam</span>
+                <span class="tab-subtitle">Policy Response</span>
+            </button>
+        </div>
+        
+        <!-- City Content -->
+        <div class="city-content active" data-city="barcelona">
+            <div class="city-story">
+                <h3>Barcelona: Tourist Saturation</h3>
+                <p>The historic center of Barcelona tells a familiar story: local businesses replaced by tourist shops, residential buildings converted to vacation rentals, and rising rents pushing families to the periphery.</p>
+                <div class="stat-highlight">
+                    <span class="stat-number">19,410</span>
+                    <span class="stat-text">Airbnb listings in a city of 1.6M</span>
                 </div>
             </div>
+            <div class="city-map-container">
+                <div id="cityMap" class="map-container"></div>
+                <div class="map-controls">
+                    <button id="backButton" class="control-btn hidden">← Back to Europe</button>
+                    <div class="toggle-container" id="viewToggle">
+                        <label class="toggle-label">
+                            <input type="radio" name="viewMode" value="dots" checked>
+                            <span>Individual listings</span>
+                        </label>
+                        <label class="toggle-label">
+                            <input type="radio" name="viewMode" value="heatmap">
+                            <span>Density heatmap</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="city-content" data-city="lisbon">
+            <div class="city-story">
+                <h3>Lisbon: Rapid Change</h3>
+                <p>Lisbon's transformation happened quickly. The Alfama district, once home to local families, now sees tourists outnumbering residents. Rents have tripled in under a decade.</p>
+                <div class="stat-highlight">
+                    <span class="stat-number">25,449</span>
+                    <span class="stat-text">listings in Portugal's capital</span>
+                </div>
+            </div>
+            <div class="city-map-container">
+                <p class="map-placeholder">Click the map above to explore Lisbon's Airbnb distribution</p>
+            </div>
+        </div>
+        
+        <div class="city-content" data-city="amsterdam">
+            <div class="city-story">
+                <h3>Amsterdam: Fighting Back</h3>
+                <p>Amsterdam implemented strict regulations: mandatory licensing, a 30-night annual limit, and heavy fines for violations. The result? Listing growth slowed significantly.</p>
+                <div class="stat-highlight">
+                    <span class="stat-number">30 nights</span>
+                    <span class="stat-text">maximum per property per year</span>
+                </div>
+            </div>
+            <div class="city-map-container">
+                <p class="map-placeholder">Click the map above to explore Amsterdam's regulated landscape</p>
+            </div>
+        </div>
+    </section>
 
-        <!-- Tooltip -->
-        <div id="tooltip" class="tooltip"></div>
-    </div>
+    <!-- ACT 4: DENSITY - Side by Side FLIPPED (text left, viz right) -->
+    <section id="act4" class="act-section side-by-side flipped" data-act="4">
+        <div class="story-scroll">
+            <div class="step" data-step="0">
+                <h2>Act 4: The Human Impact</h2>
+                <h3>Measuring Displacement</h3>
+                <p>When we adjust for population size, the pressure becomes clear. This metric shows Airbnbs per 1,000 residents—the real measure of housing competition.</p>
+            </div>
+            
+            <div class="step" data-step="1">
+                <h3>Copenhagen: Saturation Point</h3>
+                <div class="stat-highlight">
+                    <span class="stat-number">40.5</span>
+                    <span class="stat-text">Airbnbs per 1,000 residents</span>
+                </div>
+                <p>That's 1 Airbnb for every 25 people. In tourist districts, it's closer to 1 in 5.</p>
+            </div>
+            
+            <div class="step" data-step="2">
+                <h3>Island and Coastal Cities</h3>
+                <p>Florence, Venice, Mallorca—these cities face density levels that fundamentally alter the housing market. Limited space meets unlimited tourism demand.</p>
+            </div>
+            
+            <div class="step" data-step="3">
+                <h3>The Displacement Calculation</h3>
+                <p>Every Airbnb represents potential long-term housing. With average occupancy of 60% and 2.2 people per household, we can estimate displacement.</p>
+                <p class="insight">Thousands of families pushed from city centers to suburbs or beyond.</p>
+            </div>
+        </div>
+        
+        <div class="viz-sticky">
+            <div class="panel">
+                <h3 class="panel-title">Density Rankings</h3>
+                <p class="panel-subtitle">Top cities by Airbnb listings per 1,000 residents</p>
+                <div id="densityChart" class="chart"></div>
+                <div class="chart-note" id="densityNote"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ACT 5: SOLUTIONS - Centered, Hopeful -->
+    <section id="act5" class="act-section centered-section hopeful" data-act="5">
+        <div class="solution-container">
+            <h2>Act 5: A Path Forward</h2>
+            <p class="lead-text">The story doesn't have to end with displacement. Cities are fighting back—and winning.</p>
+            
+            <div class="solutions-grid">
+                <div class="solution-card">
+                    <div class="solution-icon">🇳🇱</div>
+                    <h3>Amsterdam</h3>
+                    <p class="solution-desc">Mandatory licensing system with 30-night annual limit per property</p>
+                    <div class="solution-result">
+                        <span class="result-label">Result:</span>
+                        <span class="result-text">Listing growth slowed by 60%</span>
+                    </div>
+                </div>
+                
+                <div class="solution-card">
+                    <div class="solution-icon">🇪🇸</div>
+                    <h3>Barcelona</h3>
+                    <p class="solution-desc">Moratorium on new licenses and aggressive enforcement against illegal listings</p>
+                    <div class="solution-result">
+                        <span class="result-label">Result:</span>
+                        <span class="result-text">5,000+ illegal listings removed</span>
+                    </div>
+                </div>
+                
+                <div class="solution-card">
+                    <div class="solution-icon">🇫🇷</div>
+                    <h3>Paris</h3>
+                    <p class="solution-desc">Registration requirements and 120-night limit for primary residences</p>
+                    <div class="solution-result">
+                        <span class="result-label">Result:</span>
+                        <span class="result-text">Housing stock recovery in tourist districts</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="conclusion-message">
+                <h3>The Power of Policy</h3>
+                <p>These regulations prove that cities can reclaim housing for residents without banning tourism. Smart policy, consistent enforcement, and community engagement create sustainable tourism that doesn't displace locals.</p>
+                <p class="cta-text">The solution exists. What's needed now is the political will to implement it.</p>
+            </div>
+            
+            <div class="credits">
+                <p><strong>Data Visualization Project</strong> | University of Ljubljana | 2024-2025</p>
+                <p class="data-sources">Data sources: Inside Airbnb, Eurostat, Wikipedia</p>
+            </div>
+        </div>
+    </section>
 
     <script src="app.js"></script>
 </body>

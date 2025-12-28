@@ -191,7 +191,7 @@ function renderCityMarkers() {
                 <strong style="font-size: 14px;">${city.city}</strong><br>
                 <span style="color: #7f8c8d; font-size: 12px;">${city.country}</span><br>
                 <span style="font-size: 13px;">${city.count.toLocaleString()} listings</span><br>
-                <span style="font-size: 13px;">€${city.avg_price != null ? city.avg_price.toFixed(2) : 'N/A'} avg</span>
+                <span style="font-size: 13px;">â‚¬${city.avg_price != null ? city.avg_price.toFixed(2) : 'N/A'} avg</span>
             </div>
         `;
         
@@ -311,7 +311,7 @@ function renderAirbnbDots() {
             <div style="min-width: 150px;">
                 <strong style="font-size: 13px;">${listing.name || 'Airbnb Listing'}</strong><br>
                 <span style="color: #7f8c8d; font-size: 11px;">Host: ${listing.host_name || 'N/A'}</span><br>
-                <span style="font-size: 12px; color: #e74c3c; font-weight: 600;">€${listing.price != null ? listing.price : 'N/A'}</span><br>
+                <span style="font-size: 12px; color: #e74c3c; font-weight: 600;">â‚¬${listing.price != null ? listing.price : 'N/A'}</span><br>
                 <span style="font-size: 11px;">${listing.room_type || 'N/A'}</span>
                 ${listing.neighbourhood ? `<br><span style="font-size: 11px; color: #7f8c8d;">${listing.neighbourhood}</span>` : ''}
             </div>
@@ -530,10 +530,10 @@ function renderAffordabilityChart(rawData, metric = "private") {
   // Basic dimensions (robust)
 const bounds = container.node().getBoundingClientRect();
 
-// fallback če je container preozek ali 0 (npr. ob prvem renderju)
+// fallback Äe je container preozek ali 0 (npr. ob prvem renderju)
 const width = Math.max(640, bounds.width || 0);
 
-// levi margin naj se prilagodi širini (da ne naredi innerW negativnega)
+// levi margin naj se prilagodi Å¡irini (da ne naredi innerW negativnega)
 const margin = {
   top: 20,
   right: 30,
@@ -587,14 +587,14 @@ const g = svg.append("g")
       : "Entire home vs detached house rent";
 
     const rentLine = metric === "private"
-      ? `Rent (1-bed, month): €${formatNumber(d.rent1bed, 0)}`
-      : `Rent (detached house, month): €${formatNumber(d.rentHouse, 0)}`;
+      ? `Rent (1-bed, month): â‚¬${formatNumber(d.rent1bed, 0)}`
+      : `Rent (detached house, month): â‚¬${formatNumber(d.rentHouse, 0)}`;
 
     tooltip
       .style("opacity", 1)
       .html(`
         <div style="font-weight:600; margin-bottom:6px;">${d.city}, ${d.country}</div>
-        <div>${label}: <b>${formatNumber(d.value, 2)}×</b></div>
+        <div>${label}: <b>${formatNumber(d.value, 2)}Ã—</b></div>
         <div>${rentLine}</div>
       `)
       .style("left", `${event.pageX + 14}px`)
@@ -637,7 +637,7 @@ const g = svg.append("g")
     .attr("dy", "0.35em")
     .attr("fill", "#2c3e50")
     .style("font-size", "12px")
-    .text(d => `${formatNumber(d.value, 2)}×`);
+    .text(d => `${formatNumber(d.value, 2)}Ã—`);
 
   // Note
   const missingCount = rawData.length - data.length;
@@ -787,3 +787,72 @@ if (document.readyState === 'loading') {
 } else {
     init();
 }
+
+
+// ============================================================================
+// PROGRESS DOTS - ULTRA SIMPLE VERSION (ONLY ONE!)
+// ============================================================================
+
+console.log('🎯 Progress dots script starting...');
+
+setTimeout(function() {
+    console.log('🎯 Initializing progress dots...');
+    
+    const sections = document.querySelectorAll('section[data-act]');
+    const dots = document.querySelectorAll('.progress-dot');
+    
+    console.log('🎯 Found', sections.length, 'sections');
+    console.log('🎯 Found', dots.length, 'dots');
+    
+    if (sections.length === 0 || dots.length === 0) {
+        console.log('❌ No sections or dots found!');
+        return;
+    }
+    
+    function updateDots() {
+        const scrollPos = window.scrollY + window.innerHeight / 2;
+        let activeIndex = 0;
+        
+        for (let i = sections.length - 1; i >= 0; i--) {
+            if (scrollPos >= sections[i].offsetTop) {
+                activeIndex = i;
+                break;
+            }
+        }
+        
+        dots.forEach(function(dot, index) {
+            if (index === activeIndex) {
+                dot.classList.add('active');
+            } else {
+                dot.classList.remove('active');
+            }
+        });
+    }
+    
+    let scrollTimer;
+    window.addEventListener('scroll', function() {
+        if (scrollTimer) clearTimeout(scrollTimer);
+        scrollTimer = setTimeout(updateDots, 50);
+    });
+    
+    dots.forEach(function(dot, index) {
+        dot.addEventListener('click', function() {
+            console.log('🎯 Clicked dot', index);
+            
+            window.scrollTo({
+                top: sections[index].offsetTop,
+                behavior: 'smooth'
+            });
+            
+            dots.forEach(function(d) {
+                d.classList.remove('active');
+            });
+            dot.classList.add('active');
+        });
+    });
+    
+    updateDots();
+    
+    console.log('✅ Progress dots initialized!');
+    
+}, 2000);
