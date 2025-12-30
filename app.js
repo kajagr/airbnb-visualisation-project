@@ -19,7 +19,10 @@ const state = {
     act3Heatmap: null,
     // Act 4
     densityData: null,
-    densityChartRendered: false
+    densityChartRendered: false,
+    // Act 4.5
+    housingPressureData: null,
+    housingPressureLoaded: false,
 };
 
 const config = {
@@ -177,6 +180,92 @@ function setupScrollListener() {
     console.log('Scroll listener set up for', narrativeSteps.length, 'narrative steps');
 }
 
+function setupScrollNextButton() {
+    const button = document.getElementById('scroll-next-btn');
+    if (!button) return;
+    
+    // Get all narrative steps in order
+    const allSteps = Array.from(document.querySelectorAll('.narrative-step, .narrative-step-full'));
+    
+    // Function to find current step based on viewport
+    function getCurrentStep() {
+        const viewportCenter = window.innerHeight / 2;
+        let currentStep = null;
+        let minDistance = Infinity;
+        
+        allSteps.forEach(step => {
+            const rect = step.getBoundingClientRect();
+            const stepCenter = rect.top + rect.height / 2;
+            const distance = Math.abs(stepCenter - viewportCenter);
+            
+            // Check if step is in viewport (at least partially visible)
+            if (rect.top < viewportCenter + 100 && rect.bottom > viewportCenter - 100) {
+                if (distance < minDistance) {
+                    minDistance = distance;
+                    currentStep = step;
+                }
+            }
+        });
+        
+        return currentStep;
+    }
+    
+    // Function to get next step
+    function getNextStep() {
+        const currentStep = getCurrentStep();
+        if (!currentStep) {
+            // If no current step, return first step
+            return allSteps.length > 0 ? allSteps[0] : null;
+        }
+        
+        const currentIndex = allSteps.indexOf(currentStep);
+        if (currentIndex < allSteps.length - 1) {
+            return allSteps[currentIndex + 1];
+        }
+        
+        return null; // Last step, no next step
+    }
+    
+    // Function to scroll to next step
+    function scrollToNext() {
+        const nextStep = getNextStep();
+        if (nextStep) {
+            nextStep.scrollIntoView({ 
+                behavior: 'smooth', 
+                block: 'center' 
+            });
+        }
+    }
+    
+    // Button click handler
+    button.addEventListener('click', scrollToNext);
+    
+    // Show/hide button based on scroll position
+    function updateButtonVisibility() {
+        const nextStep = getNextStep();
+        if (nextStep) {
+            button.classList.remove('hidden');
+        } else {
+            button.classList.add('hidden');
+        }
+    }
+    
+    // Update button visibility on scroll (with debouncing)
+    let scrollTimeout;
+    window.addEventListener('scroll', () => {
+        clearTimeout(scrollTimeout);
+        scrollTimeout = setTimeout(updateButtonVisibility, 150);
+    }, { passive: true });
+    
+    // Also update on resize
+    window.addEventListener('resize', () => {
+        updateButtonVisibility();
+    });
+    
+    // Initial check
+    setTimeout(updateButtonVisibility, 500);
+}
+
 function activateStep(stepName) {
     if (state.currentStep === stepName) return;
     
@@ -210,6 +299,8 @@ function activateStep(stepName) {
         updateProgressDots(3);
     } else if (stepName?.startsWith('impact-')) {
         updateProgressDots(4);  // ← ADD THIS
+    } else if (stepName?.startsWith('pressure-')) {
+    updateProgressDots(4);
     } else if (stepName?.startsWith('response-')) {
         updateProgressDots(5);  // ← ADD THIS
     }
@@ -264,6 +355,13 @@ async function loadData() {
         console.error('Error loading data:', error);
         alert('Error loading data. Check console for details.');
     }
+    state.housingPressureData = await d3.json('/data/processed/housing_pressure.json');
+    state.housingPressureLoaded = true;
+    console.log(
+        'Housing pressure data loaded:',
+        state.housingPressureData.length,
+        'cities'
+    );
 }
 
 async function preloadTopCities() {
@@ -579,6 +677,20 @@ function updateMapForStep(stepName) {
                 break;
         }
     }
+
+    // ACT 4.5: Housing Pressure
+    if (stepName === 'pressure-intro') {
+        renderHousingGauge('girona');
+    }
+
+    if (stepName === 'pressure-high') {
+        renderHousingGauge('bergamo'); // or malta
+    }
+
+    if (stepName === 'pressure-low') {
+        renderHousingGauge('berlin'); // or rotterdam
+    }
+
 
     // ACT 5: Response / Solutions steps (narrative-focused, no map updates)
     if (stepName?.startsWith('response-')) {
@@ -1404,6 +1516,180 @@ function highlightDensityCities(cityIds) {
     }
 }
 
+function renderHousingGauge(cityId) {
+    if (!state.housingPressureData) {
+        console.warn('Housing pressure data not loaded');
+        return;
+    }
+
+    const city = state.housingPressureData.find(d => d.id === cityId);
+    if (!city) {
+        console.warn('City not found:', cityId);
+        return;
+    }
+
+    console.log('Rendering gauge for:', city.city, city.airbnb_share + '%');
+    state.currentHousingCity = cityId;
+
+    const container = d3.select('#housing-gauge');
+    container.selectAll('*').remove();
+
+    const width = 480;
+    const height = 400; // Increased height to accommodate text below
+    const radius = 140;
+    const gaugeY = 160; // Position of gauge center from top
+
+    const svg = container.append('svg')
+        .attr('width', width)
+        .attr('height', height)
+        .style('overflow', 'visible');
+
+    const g = svg.append('g')
+        .attr('transform', `translate(${width / 2}, ${gaugeY})`);
+
+    // Cap visual scale at 15% for better display of extreme values
+    const maxValue = 15;
+    const scale = d3.scaleLinear()
+        .domain([0, maxValue])
+        .range([-Math.PI * 0.75, Math.PI * 0.75]); // Wider arc
+
+    const arc = d3.arc()
+        .innerRadius(radius - 28)
+        .outerRadius(radius)
+        .cornerRadius(2);
+
+    // Color zones
+    const zones = [
+        { from: 0, to: 2, color: '#4CAF50', label: 'Low' },
+        { from: 2, to: 5, color: '#FFC107', label: 'Medium' },
+        { from: 5, to: maxValue, color: '#FF385C', label: 'High' }
+    ];
+
+    // Draw colored zones
+    zones.forEach(z => {
+        g.append('path')
+            .attr('d', arc({
+                startAngle: scale(z.from),
+                endAngle: scale(z.to)
+            }))
+            .attr('fill', z.color)
+            .attr('opacity', 0.85);
+    });
+
+    // Add percentage tick marks and labels
+    const ticks = [0, 2, 5, 10, 15];
+    ticks.forEach(val => {
+        const angle = scale(val);
+        const innerR = radius - 28;
+        const outerR = radius + 5;
+        
+        // Tick mark
+        const x1 = Math.cos(angle - Math.PI / 2) * innerR;
+        const y1 = Math.sin(angle - Math.PI / 2) * innerR;
+        const x2 = Math.cos(angle - Math.PI / 2) * outerR;
+        const y2 = Math.sin(angle - Math.PI / 2) * outerR;
+        
+        g.append('line')
+            .attr('x1', x1)
+            .attr('y1', y1)
+            .attr('x2', x2)
+            .attr('y2', y2)
+            .attr('stroke', '#333')
+            .attr('stroke-width', 2);
+        
+        // Label
+        const labelR = radius + 20;
+        const labelX = Math.cos(angle - Math.PI / 2) * labelR;
+        const labelY = Math.sin(angle - Math.PI / 2) * labelR;
+        
+        g.append('text')
+            .attr('x', labelX)
+            .attr('y', labelY)
+            .attr('text-anchor', 'middle')
+            .attr('dominant-baseline', 'middle')
+            .attr('font-size', '13px')
+            .attr('font-weight', '600')
+            .attr('fill', '#333')
+            .text(val + '%');
+    });
+
+    // Calculate needle angle (clamp to max visual range)
+    const actualValue = city.airbnb_share;
+    const displayValue = Math.min(actualValue, maxValue);
+    const angle = scale(displayValue);
+    const needleLength = radius - 35;
+
+    // Needle group
+    const needleGroup = g.append('g')
+        .attr('class', 'needle-group');
+
+    // Animated needle
+    needleGroup.append('line')
+        .attr('class', 'gauge-needle')
+        .attr('x1', 0)
+        .attr('y1', 0)
+        .attr('x2', 0)
+        .attr('y2', -needleLength)
+        .attr('stroke', '#222')
+        .attr('stroke-width', 4)
+        .attr('stroke-linecap', 'round')
+        .attr('transform', `rotate(${scale(0) * 180 / Math.PI})`)
+        .transition()
+        .duration(1500)
+        .ease(d3.easeElasticOut.amplitude(1).period(0.5))
+        .attr('transform', `rotate(${angle * 180 / Math.PI})`);
+
+    // Needle base (smaller to reduce overlap)
+    needleGroup.append('circle')
+        .attr('r', 8)
+        .attr('fill', '#222');
+
+    needleGroup.append('circle')
+        .attr('r', 3)
+        .attr('fill', '#fff');
+
+    // Main percentage value - BELOW the gauge arc
+    const valueColor = actualValue > 5 ? '#FF385C' : actualValue > 2 ? '#FFC107' : '#4CAF50';
+    
+    svg.append('text')
+        .attr('class', 'gauge-value')
+        .attr('x', width / 2)
+        .attr('y', gaugeY + 70)
+        .attr('text-anchor', 'middle')
+        .attr('font-size', '52px')
+        .attr('font-weight', 'bold')
+        .attr('fill', valueColor)
+        .text('0%')
+        .transition()
+        .duration(1500)
+        .tween('text', function() {
+            const i = d3.interpolate(0, actualValue);
+            return function(t) {
+                this.textContent = i(t).toFixed(1) + '%';
+            };
+        });
+
+    // City name and year (below percentage)
+    svg.append('text')
+        .attr('x', width / 2)
+        .attr('y', gaugeY + 110)
+        .attr('text-anchor', 'middle')
+        .attr('font-size', '18px')
+        .attr('font-weight', '600')
+        .attr('fill', '#333')
+        .text(`${city.city} (${city.year})`);
+
+    // Detailed stats (below city name)
+    svg.append('text')
+        .attr('x', width / 2)
+        .attr('y', gaugeY + 135)
+        .attr('text-anchor', 'middle')
+        .attr('font-size', '13px')
+        .attr('fill', '#666')
+        .text(`${city.airbnb_homes.toLocaleString()} of ${city.total_housing.toLocaleString()} homes`);
+
+    console.log('Gauge rendered successfully');
+}
 // ============================================================================
 // ACT 5: THE RESPONSE / SOLUTIONS
 // ============================================================================
