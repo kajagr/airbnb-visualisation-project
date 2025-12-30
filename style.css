@@ -634,7 +634,7 @@ header h1 {
 
 .timeline-card {
   position: absolute;
-  top: 16px;
+  bottom: 16px;
   left: 16px;
   width: min(480px, 96vw);
   background: #fff;
@@ -900,7 +900,6 @@ header h1 {
     color: var(--airbnb-red);
     margin-bottom: 32px;
     line-height: 1.1;
-    text-align: center;
 }
 
 .narrative-step-full h3 {
