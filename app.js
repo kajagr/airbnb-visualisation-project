@@ -68,12 +68,16 @@ async function init() {
     initializeAct3(); 
     initializeAct4();
     initializeAct5();
+    initializeAct6();
     
     // Load data (async)
     await loadData();
     
     // Setup scroll listener AFTER data is loaded
     setupScrollListener();
+    
+    // Restore last viewed act if available
+    restoreLastAct();
     
     console.log('✅ All initialization complete');
 }
@@ -96,6 +100,7 @@ function setupProgressDots() {
 function scrollToAct(actNumber) {
     const actElement = document.getElementById(`act${actNumber}`);
     if (actElement) {
+        updateProgressDots(actNumber);
         actElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
 }
@@ -112,6 +117,21 @@ function updateProgressDots(currentAct) {
             dot.classList.remove('active');
         }
     });
+    
+    // Store the current act in sessionStorage
+    if (currentAct) {
+        sessionStorage.setItem('lastActiveAct', currentAct);
+    }
+}
+
+function restoreLastAct() {
+    const lastAct = sessionStorage.getItem('lastActiveAct');
+    if (lastAct) {
+        // Small delay to ensure page is fully loaded
+        setTimeout(() => {
+            scrollToAct(lastAct);
+        }, 100);
+    }
 }
 
 function setupActObserver() {
@@ -158,6 +178,12 @@ function setupScrollListener() {
                 const stepName = entry.target.dataset.step;
                 if (stepName) {
                     activateStep(stepName);
+                } else {
+                    // If no data-step, check which act this step belongs to and activate accordingly
+                    const act5 = document.getElementById('act5');
+                    if (act5 && act5.contains(entry.target)) {
+                        activateStep('timeline');  // Act 5: Timeline
+                    }
                 }
             }
         });
@@ -170,6 +196,9 @@ function setupScrollListener() {
         const stepName = step.dataset.step;
         if (stepName) {
             console.log('Observing step:', stepName);
+            observer.observe(step);
+        } else {
+            // Also observe steps without data-step (like Act 5)
             observer.observe(step);
         }
     });
@@ -209,9 +238,11 @@ function activateStep(stepName) {
     } else if (stepName?.startsWith('concentration-') || stepName?.includes('barcelona') || stepName?.includes('lisbon') || stepName?.includes('amsterdam')) {
         updateProgressDots(3);
     } else if (stepName?.startsWith('impact-')) {
-        updateProgressDots(4);  // ← ADD THIS
+        updateProgressDots(4);
+    } else if (stepName === 'timeline') {
+        updateProgressDots(5);  // Act 5: Timeline
     } else if (stepName?.startsWith('response-')) {
-        updateProgressDots(5);  // ← ADD THIS
+        updateProgressDots(6);  // Act 6: The Response
     }
     
     // Update map based on step
@@ -1404,12 +1435,402 @@ function highlightDensityCities(cityIds) {
     }
 }
 
+// ===================================================
+// ACT 5: Multi-city timeline (active listings by year)
+// Visible if: first_year <= year <= last_year
+// ===================================================
+
+const ACT5_YEAR_MIN = 2015;
+const ACT5_YEAR_MAX = 2025;
+
+const CITY_CONFIG = {
+  amsterdam: {
+    name: "Amsterdam",
+    file: "data/processed/amsterdam_timeline_points.csv",
+    center: [52.3702, 4.8952],
+    zoom: 12,
+    minYearFallback: 2015
+  },
+  paris: {
+    name: "Paris",
+    file: "data/processed/paris_timeline_points.csv",
+    center: [48.8566, 2.3522],
+    zoom: 12,
+    minYearFallback: 2015
+  },
+  berlin: {
+    name: "Berlin",
+    file: "data/processed/berlin_timeline_points.csv",
+    center: [52.52, 13.405],
+    zoom: 12,
+    minYearFallback: 2015
+  },
+  barcelona: {
+    name: "Barcelona",
+    file: "data/processed/barcelona_timeline_points.csv",
+    center: [41.3851, 2.1734],
+    zoom: 12,
+    minYearFallback: 2015
+  }
+};
+
+// Map + renderer
+let act5Map = null;
+let act5Layer = null;
+const act5Renderer = L.canvas({ padding: 0.5 });
+
+// City state
+let act5CityKey = "amsterdam";
+let act5CurrentYear = null;
+
+// Cache per city: data + indices + min/max
+const act5Cache = new Map(); // cityKey -> { data, byFirst, byLast, minYear, maxYear, markers, currentYear }
+
+// Play animation
+let act5IsPlaying = false;
+let act5Timer = null;
+const ACT5_PLAY_INTERVAL_MS = 500; 
+
+function initAct5Map() {
+  if (act5Map) return;
+  const el = document.getElementById("act5-map");
+  if (!el) return;
+
+  const cfg = CITY_CONFIG[act5CityKey];
+
+  act5Map = L.map("act5-map").setView(cfg.center, cfg.zoom);
+
+  L.tileLayer("https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png", {
+    attribution: '&copy; OpenStreetMap contributors &copy; CARTO'
+  }).addTo(act5Map);
+
+  act5Layer = L.layerGroup().addTo(act5Map);
+}
+
+function indexTimelineData(rows) {
+  const byFirst = new Map();
+  const byLast = new Map();
+
+  rows.forEach(d => {
+    if (!byFirst.has(d.first_year)) byFirst.set(d.first_year, []);
+    byFirst.get(d.first_year).push(d);
+
+    if (!byLast.has(d.last_year)) byLast.set(d.last_year, []);
+    byLast.get(d.last_year).push(d);
+  });
+
+  return { byFirst, byLast };
+}
+
+function stopAct5Playback() {
+  act5IsPlaying = false;
+  if (act5Timer) clearInterval(act5Timer);
+  act5Timer = null;
+
+  const btn = document.getElementById("act5-playBtn");
+  if (btn) {
+    btn.classList.remove("is-playing");
+    btn.textContent = "▶";
+    btn.setAttribute("aria-label", "Play timeline");
+  }
+}
+
+function startAct5Playback() {
+  const slider = document.getElementById("act5-yearSlider");
+  if (!slider) return;
+
+  // If already playing, then toggle to pause
+  if (act5IsPlaying) {
+    act5IsPlaying = false;
+    if (act5Timer) clearInterval(act5Timer);
+    act5Timer = null;
+    const btn = document.getElementById("act5-playBtn");
+    if (btn) {
+      btn.classList.remove("is-playing");
+      btn.textContent = "▶";
+      btn.setAttribute("aria-label", "Play timeline");
+    }
+    return;
+  }
+
+  act5IsPlaying = true;
+  const btn = document.getElementById("act5-playBtn");
+  if (btn) {
+    btn.classList.add("is-playing");
+    btn.textContent = "❚❚";
+    btn.setAttribute("aria-label", "Pause timeline");
+  }
+
+  // Prevent double timers
+  if (act5Timer) clearInterval(act5Timer);
+
+  act5Timer = setInterval(async () => {
+    if (!act5IsPlaying) {
+      if (act5Timer) clearInterval(act5Timer);
+      act5Timer = null;
+      return;
+    }
+    const cityState = await loadCity(act5CityKey);
+
+    let y = +slider.value;
+    const maxY = +slider.max;
+
+    // loop back to min when reaching end
+    if (y >= maxY) {
+      y = +slider.min;
+      slider.value = y;
+      cityState.currentYear = null; // force rebuild for clean loop
+      cityState.markers.clear();
+      act5Layer && act5Layer.clearLayers();
+      setYear(cityState, y);
+      return;
+    }
+
+    y += 1;
+    slider.value = y;
+    setYear(cityState, y);
+  }, ACT5_PLAY_INTERVAL_MS);
+}
+
+
+function addListingDot(cityState, d) {
+  if (cityState.markers.has(d.id)) return;
+
+  const m = L.circleMarker([d.lat, d.lng], {
+    radius: 3,
+    weight: 1.5,
+    color: "#fff", // white outline
+    fillColor: "#FF385C",
+    fillOpacity: 0.7,
+    renderer: act5Renderer,
+    className: "airbnb-dot"
+  });
+  
+
+  m.addTo(act5Layer);
+  cityState.markers.set(d.id, m);
+}
+
+function removeListingDot(cityState, id) {
+  const m = cityState.markers.get(id);
+  if (!m) return;
+  act5Layer.removeLayer(m);
+  cityState.markers.delete(id);
+}
+
+function renderYearFull(cityState, year) {
+  act5Layer.clearLayers();
+  cityState.markers.clear();
+
+  const active = cityState.data.filter(
+    d =>
+      d.first_year <= year &&
+      d.last_year >= year &&
+      d.last_year >= ACT5_YEAR_MIN
+  );
+  active.forEach(d => addListingDot(cityState, d));
+
+  updateOverlayCount(cityState.markers.size);
+  cityState.currentYear = year;
+}
+
+function renderYearIncremental(cityState, year) {
+  // Add starts
+  const starts = cityState.byFirst.get(year) || [];
+  starts.forEach(d => addListingDot(cityState, d));
+
+  // Remove those that ended last year
+  const endedLastYear = cityState.byLast.get(year - 1) || [];
+  endedLastYear.forEach(d => removeListingDot(cityState, d.id));
+
+  updateOverlayCount(cityState.markers.size);
+  cityState.currentYear = year;
+}
+
+function setYear(cityState, year) {
+  updateOverlayYear(year);
+
+  if (cityState.currentYear === null) {
+    renderYearFull(cityState, year);
+    return;
+  }
+
+  if (year < cityState.currentYear) {
+    renderYearFull(cityState, year);
+    return;
+  }
+
+  for (let y = cityState.currentYear + 1; y <= year; y++) {
+    renderYearIncremental(cityState, y);
+  }
+}
+
+function updateOverlayYear(year) {
+  const label = document.getElementById("act5-yearLabel");
+  if (label) label.textContent = year;
+}
+
+function updateOverlayCount(count) {
+  const countEl = document.getElementById("act5-count");
+  if (countEl) countEl.textContent = count;
+}
+
+function updateOverlayCityTitle(cityKey) {
+  const title = document.getElementById("act5-cityTitle");
+  if (title) title.textContent = `${CITY_CONFIG[cityKey].name} activity timeline`;
+}
+
+// Loads (or uses cached) city dataset
+async function loadCity(cityKey) {
+  if (act5Cache.has(cityKey)) return act5Cache.get(cityKey);
+
+  const cfg = CITY_CONFIG[cityKey];
+
+  const rows = await d3.csv(cfg.file, d => ({
+    id: d.id,
+    lat: +d.latitude,
+    lng: +d.longitude,
+    room_type: d.room_type,
+    first_year: +d.first_year,
+    last_year: +d.last_year
+  }));
+
+  const data = rows.filter(d =>
+    !isNaN(d.lat) && !isNaN(d.lng) &&
+    !isNaN(d.first_year) && !isNaN(d.last_year) &&
+    d.last_year >= d.first_year
+  );
+
+  const minYearData = d3.min(data, d => d.first_year) ?? cfg.minYearFallback;
+  const maxYearData = d3.max(data, d => d.last_year) ?? ACT5_YEAR_MAX;
+  
+  const minYear = Math.max(ACT5_YEAR_MIN, minYearData);
+  const maxYear = Math.min(ACT5_YEAR_MAX, maxYearData);  
+
+  const { byFirst, byLast } = indexTimelineData(data);
+
+  const cityState = {
+    data,
+    byFirst,
+    byLast,
+    minYear,
+    maxYear,
+    markers: new Map(),
+    currentYear: null
+  };
+
+  act5Cache.set(cityKey, cityState);
+  return cityState;
+}
+
+function setSliderRange(minYear, maxYear, currentYearDesired = null) {
+  const slider = document.getElementById("act5-yearSlider");
+  if (!slider) return;
+
+  slider.min = minYear;
+  slider.max = maxYear;
+
+  let year = currentYearDesired;
+  if (year === null || year === undefined) {
+    year = Math.min(Math.max(2018, minYear), maxYear);
+  } else {
+    year = Math.min(Math.max(year, minYear), maxYear);
+  }
+
+  slider.value = year;
+  updateOverlayYear(year);
+  return year;
+}
+
+async function switchCity(cityKey) {
+  stopAct5Playback();
+  act5CityKey = cityKey;
+
+  // Update select to match current city
+  const select = document.getElementById("act5-citySelect");
+  if (select) {
+    select.value = cityKey;
+  }
+
+  // Update title
+  updateOverlayCityTitle(cityKey);
+
+  // Clear map layer
+  act5Layer && act5Layer.clearLayers();
+
+  // Set view
+  const cfg = CITY_CONFIG[cityKey];
+  act5Map.setView(cfg.center, cfg.zoom);
+
+  // Load data + set slider range
+  const cityState = await loadCity(cityKey);
+
+  // keep same year if possible
+  const slider = document.getElementById("act5-yearSlider");
+  const desiredYear = slider ? +slider.value : null;
+
+  const year = setSliderRange(cityState.minYear, cityState.maxYear, desiredYear);
+
+  // Reset and render
+  cityState.currentYear = null;
+  cityState.markers.clear();
+  setYear(cityState, year);
+
+  // Leaflet resize fix
+  setTimeout(() => act5Map && act5Map.invalidateSize(), 150);
+
+
+
+}
+
+async function initializeAct5() {
+  initAct5Map();
+
+  // UI
+  const slider = document.getElementById("act5-yearSlider");
+  const select = document.getElementById("act5-citySelect");
+
+  if (!slider || !select) return;
+
+  // Play button
+  const playBtn = document.getElementById("act5-playBtn");
+  if (playBtn) {
+    playBtn.addEventListener("click", () => {
+      startAct5Playback();
+    });
+  }
+
+  // Read initial city from select element to ensure sync with HTML
+  const initialCity = select.value || act5CityKey;
+  act5CityKey = initialCity;
+
+  // initial city
+  updateOverlayCityTitle(act5CityKey);
+  await switchCity(act5CityKey);
+
+  // City switch
+  select.addEventListener("change", async (e) => {
+    await switchCity(e.target.value);
+  });
+
+  // Year slider change
+  let t = null;
+  slider.addEventListener("input", (e) => {
+    const year = +e.target.value;
+    clearTimeout(t);
+    t = setTimeout(async () => {
+      const cityState = await loadCity(act5CityKey);
+      setYear(cityState, year);
+    }, 30);
+  });
+}
+
 // ============================================================================
-// ACT 5: THE RESPONSE / SOLUTIONS
+// ACT 6: THE RESPONSE / SOLUTIONS
 // ============================================================================
 
-function initializeAct5() {
-    console.log('Act 5 initialized (narrative-focused)');
+function initializeAct6() {
+    console.log('Act 6 initialized (narrative-focused)');
     
     // Optional: Add subtle animations when policy cards come into view
     setupPolicyCardAnimations();
