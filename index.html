@@ -37,6 +37,9 @@
                     <span class="dot-label">Impact</span>
                 </div>
                 <div class="progress-dot" data-act="5">
+                    <span class="dot-label">Timeline</span>
+                </div>
+                <div class="progress-dot" data-act="6">
                     <span class="dot-label">Solutions</span>
                 </div>
             </div>
@@ -470,9 +473,92 @@
                 </div>
             </section>
 
-            <!-- ACT 5: The Response -->
+            <!-- ACT 5: Timeline (active listings by year), now supports city switching -->
             <section class="act" id="act5">
-                <div class="act5-container">
+              <div class="sticky-container">
+                <div class="sticky-visual">
+                  <div id="act5-map" class="map-container"></div>
+
+                  <!-- Slider & City Switch Overlay -->
+                  <div class="map-controls-overlay timeline-card">
+
+                    <!-- Header -->
+                    <div class="timeline-header">
+                      <div>
+                        <div class="timeline-title" id="act5-cityTitle">Berlin activity timeline</div>
+                      </div>
+                  
+                      <div class="timeline-select">
+                        <select id="act5-citySelect">
+                          <option value="amsterdam" selected>Amsterdam</option>
+                          <option value="paris">Paris</option>
+                          <option value="berlin">Berlin</option>
+                          <option value="barcelona">Barcelona</option>
+                        </select>
+                        <span class="select-chevron">▾</span>
+                      </div>
+                    </div>
+                  
+                    <!-- Meta + play -->
+                    <div class="timeline-meta">
+                      <div class="meta-block">
+                        <span class="meta-label">Year</span>
+                        <span class="meta-value" id="act5-yearLabel">2019</span>
+                      </div>
+                  
+                      <div class="meta-block">
+                        <span class="meta-label">Active listings</span>
+                        <span class="meta-value accent" id="act5-count">3087</span>
+                      </div>
+                  
+                      <button id="act5-playBtn" class="play-btn">▶</button>
+                    </div>
+                  
+                    <!-- Slider -->
+                    <div class="timeline-slider">
+                      <input id="act5-yearSlider" type="range" min="2015" max="2025" step="1" />
+                      <div class="slider-ends">
+                        <span id="act5-minYear">2015</span>
+                        <span id="act5-maxYear">2025</span>
+                      </div>
+                    </div>
+                  
+                  </div>                  
+                </div>
+
+                <div class="narrative-content">
+                  <div class="narrative-step">
+                    <h2>How Airbnb activity changed over time</h2>
+                    <p class="narrative-text">
+                      A city doesn't change overnight. This view shows how short-term rentals spread, peaked, and sometimes pulled back.
+                      We use reviews to estimate when a listing still present in 2025 was active — when it started getting guests and when it last did.
+                    </p>
+                  </div>
+
+                  <div class="narrative-step">
+                    <h3>How to read the map</h3>
+                    <p class="narrative-text">
+                      Pick a city and move the year slider. Each dot is a listing that was active around that time.
+                      As you slide forward, you'll see new listings appear and older ones fade away.
+                    </p>
+                  </div>
+
+                  <div class="narrative-step">
+                    <h3>Why it matters</h3>
+                    <p class="narrative-text">
+                      It helps explain the pressure on housing: where demand concentrated, how long listings stayed on the market,
+                      and why cities began introducing rules to protect long-term housing.
+                    </p>
+                  </div>
+
+                  <div class="narrative-spacer"></div>
+                </div>
+              </div>
+            </section>
+
+            <!-- ACT 6: The Response -->
+            <section class="act" id="act6">
+                <div class="act6-container">
                     <!-- Intro -->
                     <div class="narrative-step-full" data-step="response-intro">
                         <h2>The Response</h2>

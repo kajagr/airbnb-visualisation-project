@@ -659,11 +659,258 @@ header h1 {
   text-align: center;
 }
 
+/* =========================
+   ACT 5 – Timeline Controls
+   ========================= */
+
+.timeline-card {
+  position: absolute;
+  bottom: 16px;
+  left: 16px;
+  width: min(480px, 96vw);
+  background: #fff;
+  border-radius: 18px;
+  padding: 20px 20px 18px 20px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.11);
+  z-index: 700;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  height: 200px;           /* Ensure card only grows as needed */
+  max-height: none;       /* Remove any possible max-height inheritance */
+  min-height: unset;      /* Remove any forced min height */
+}
+
+.timeline-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 16px;
+  margin-bottom: 12px;
+}
+
+.timeline-title {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #212121;
+  line-height: 1.18;
+}
+
+.timeline-select {
+  position: relative;
+  min-width: 120px;
+  flex: none;
+}
+
+.timeline-select select {
+  appearance: none;
+  background: #f4f4f4;
+  border: 1px solid #ddd;
+  border-radius: 11px;
+  padding: 8px 34px 8px 12px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  color: #333;
+  transition: border 0.2s;
+}
+
+.timeline-select select:focus {
+  outline: none;
+  border-color: #FF385C;
+  box-shadow: 0 0 0 3px rgba(255,56,92,0.13);
+}
+
+.select-chevron {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 0.8rem;
+  color: #999;
+  pointer-events: none;
+}
+
+.timeline-meta {
+  display: flex;
+  gap: 24px;
+  align-items: center;
+  background: #fafafa;
+  border: 1px solid #eee;
+  border-radius: 12px;
+  padding: 10px 16px;
+  margin-bottom: 16px;
+}
+
+.meta-block {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.meta-label {
+  font-size: 0.73rem;
+  color: #777;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.meta-value {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #212121;
+}
+
+.meta-value.accent {
+  color: var(--airbnb-red);
+}
+
+.play-btn {
+  width: 38px;
+  height: 38px;
+  border-radius: 11px;
+  border: none;
+  background: #fff;
+  font-size: 1.05rem;
+  cursor: pointer;
+  box-shadow: 0 6px 16px rgba(0,0,0,0.10);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: border 0.15s;
+}
+
+.play-btn.is-playing {
+  color: var(--airbnb-red);
+}
+
+.timeline-slider {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+#act5-yearSlider {
+  width: 100%;
+  appearance: none;
+  height: 4px;
+  background: #ddd;
+  border-radius: 100px;
+  margin: 0;
+  outline: none;
+  transition: background 0.18s;
+}
+
+#act5-yearSlider::-webkit-slider-thumb {
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--airbnb-red);
+  cursor: pointer;
+  border: 3px solid #fff;
+  box-shadow: 0 2px 7px rgba(255,56,92,0.12);
+  transition: background 0.2s;
+}
+#act5-yearSlider:focus::-webkit-slider-thumb {
+  outline: 2px solid #FF385C;
+}
+#act5-yearSlider::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--airbnb-red);
+  cursor: pointer;
+  border: 3px solid #fff;
+  box-shadow: 0 2px 7px rgba(255,56,92,0.12);
+}
+#act5-yearSlider:focus::-moz-range-thumb {
+  outline: 2px solid #FF385C;
+}
+
+#act5-yearSlider::-ms-thumb {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--airbnb-red);
+  cursor: pointer;
+  border: 3px solid #fff;
+  box-shadow: 0 2px 7px rgba(255,56,92,0.12);
+}
+#act5-yearSlider:focus::-ms-thumb {
+  outline: 2px solid #FF385C;
+}
+
+/* Remove default decorations in Firefox and IE */
+#act5-yearSlider::-ms-fill-lower {
+  background: #ddd;
+}
+#act5-yearSlider::-ms-fill-upper {
+  background: #ddd;
+}
+#act5-yearSlider:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(255,56,92,0.10);
+}
+
+.slider-ends {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.84rem;
+  color: #888;
+  width: 100%;
+  margin-top: 4px;
+}
+
+/* Mobile optimization */
+@media (max-width: 600px) {
+  .timeline-card {
+    top: 8px;
+    left: 8px;
+    width: calc(100vw - 16px);
+    padding: 13px 7px 12px 7px;
+    border-radius: 13px;
+    height: auto;          /* Ensure card height fits contents on mobile */
+    max-height: none;
+    min-height: unset;
+  }
+  .timeline-header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 7px;
+  }
+  .timeline-meta {
+    flex-direction: column;
+    gap: 10px;
+    padding: 8px 8px;
+    margin-bottom: 10px;
+  }
+  .timeline-title {
+    font-size: 0.98rem;
+  }
+  .timeline-slider {
+    gap: 4px;
+  }
+  .select-chevron {
+    right: 8px;
+  }
+  .slider-ends {
+    font-size: 0.72rem;
+  }
+  .play-btn {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    font-size: 0.85rem;
+  }
+}
+
+
 /* ============================================================================
-   ACT 5: THE RESPONSE (FULL-WIDTH NARRATIVE)
+   ACT 6: THE RESPONSE (FULL-WIDTH NARRATIVE)
    ============================================================================ */
 
-.act5-container {
+.act6-container {
     max-width: 1200px;
     margin: 0 auto;
     padding: 60px 40px;
@@ -883,7 +1130,7 @@ header h1 {
 
 /* Responsive for Act 5 */
 @media (max-width: 968px) {
-    .act5-container {
+    .act6-container {
         padding: 40px 20px;
     }
     
@@ -893,6 +1140,7 @@ header h1 {
     
     .narrative-step-full h2 {
         font-size: 2.5rem;
+        text-align: center;
     }
     
     .narrative-step-full h3 {
@@ -921,6 +1169,7 @@ header h1 {
 @media (max-width: 600px) {
     .narrative-step-full h2 {
         font-size: 2rem;
+        text-align: center;
     }
     
     .narrative-step-full h3 {
