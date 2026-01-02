@@ -1546,6 +1546,166 @@ function highlightDensityCities(cityIds) {
 }
 
 // ===================================================
+// ACT 4.5: Housing Pressure Gauge
+// ===================================================
+
+function renderHousingGauge(cityId) {
+  if (!state.housingPressureData || !Array.isArray(state.housingPressureData)) {
+      console.warn('Housing pressure data not loaded');
+      return;
+  }
+
+  const city = state.housingPressureData.find(d => d.id === cityId);
+  if (!city) {
+      console.warn('City not found:', cityId);
+      return;
+  }
+
+  // Ensure numeric values (JSON sometimes comes through as strings)
+  const actualValue = +city.airbnb_share;
+  const airbnbHomes = +city.airbnb_homes;
+  const totalHousing = +city.total_housing;
+
+  const containerSel = d3.select('#housing-gauge');
+  if (containerSel.empty()) {
+      console.warn('Missing #housing-gauge container in DOM');
+      return;
+  }
+
+  console.log('Rendering gauge for:', city.city, actualValue + '%');
+  state.currentHousingCity = cityId;
+
+  containerSel.selectAll('*').remove();
+
+  const width = 480;
+  const height = 400;
+  const radius = 140;
+  const gaugeY = 160;
+
+  const svg = containerSel.append('svg')
+      .attr('width', width)
+      .attr('height', height)
+      .style('overflow', 'visible');
+
+  const g = svg.append('g')
+      .attr('transform', `translate(${width / 2}, ${gaugeY})`);
+
+  const maxValue = 15;
+  const scale = d3.scaleLinear()
+      .domain([0, maxValue])
+      .range([-Math.PI * 0.75, Math.PI * 0.75]);
+
+  const arc = d3.arc()
+      .innerRadius(radius - 28)
+      .outerRadius(radius)
+      .cornerRadius(2);
+
+  const zones = [
+      { from: 0, to: 2, color: '#4CAF50' },
+      { from: 2, to: 5, color: '#FFC107' },
+      { from: 5, to: maxValue, color: '#FF385C' }
+  ];
+
+  zones.forEach(z => {
+      g.append('path')
+          .attr('d', arc({ startAngle: scale(z.from), endAngle: scale(z.to) }))
+          .attr('fill', z.color)
+          .attr('opacity', 0.85);
+  });
+
+  const ticks = [0, 2, 5, 10, 15];
+  ticks.forEach(val => {
+      const angle = scale(val);
+      const innerR = radius - 28;
+      const outerR = radius + 5;
+
+      const x1 = Math.cos(angle - Math.PI / 2) * innerR;
+      const y1 = Math.sin(angle - Math.PI / 2) * innerR;
+      const x2 = Math.cos(angle - Math.PI / 2) * outerR;
+      const y2 = Math.sin(angle - Math.PI / 2) * outerR;
+
+      g.append('line')
+          .attr('x1', x1).attr('y1', y1)
+          .attr('x2', x2).attr('y2', y2)
+          .attr('stroke', '#333')
+          .attr('stroke-width', 2);
+
+      const labelR = radius + 20;
+      const labelX = Math.cos(angle - Math.PI / 2) * labelR;
+      const labelY = Math.sin(angle - Math.PI / 2) * labelR;
+
+      g.append('text')
+          .attr('x', labelX)
+          .attr('y', labelY)
+          .attr('text-anchor', 'middle')
+          .attr('dominant-baseline', 'middle')
+          .attr('font-size', '13px')
+          .attr('font-weight', '600')
+          .attr('fill', '#333')
+          .text(val + '%');
+  });
+
+  const displayValue = Math.min(actualValue, maxValue);
+  const needleAngle = scale(displayValue);
+  const needleLength = radius - 35;
+
+  const needleGroup = g.append('g').attr('class', 'needle-group');
+
+  needleGroup.append('line')
+      .attr('class', 'gauge-needle')
+      .attr('x1', 0).attr('y1', 0)
+      .attr('x2', 0).attr('y2', -needleLength)
+      .attr('stroke', '#222')
+      .attr('stroke-width', 4)
+      .attr('stroke-linecap', 'round')
+      .attr('transform', `rotate(${scale(0) * 180 / Math.PI})`)
+      .transition()
+      .duration(1500)
+      .ease(d3.easeElasticOut.amplitude(1).period(0.5))
+      .attr('transform', `rotate(${needleAngle * 180 / Math.PI})`);
+
+  needleGroup.append('circle').attr('r', 8).attr('fill', '#222');
+  needleGroup.append('circle').attr('r', 3).attr('fill', '#fff');
+
+  const valueColor = actualValue > 5 ? '#FF385C' : actualValue > 2 ? '#FFC107' : '#4CAF50';
+
+  svg.append('text')
+      .attr('class', 'gauge-value')
+      .attr('x', width / 2)
+      .attr('y', gaugeY + 70)
+      .attr('text-anchor', 'middle')
+      .attr('font-size', '52px')
+      .attr('font-weight', 'bold')
+      .attr('fill', valueColor)
+      .text('0%')
+      .transition()
+      .duration(1500)
+      .tween('text', function() {
+          const i = d3.interpolateNumber(0, actualValue);
+          return function(t) {
+              this.textContent = i(t).toFixed(1) + '%';
+          };
+      });
+
+  svg.append('text')
+      .attr('x', width / 2)
+      .attr('y', gaugeY + 110)
+      .attr('text-anchor', 'middle')
+      .attr('font-size', '18px')
+      .attr('font-weight', '600')
+      .attr('fill', '#333')
+      .text(`${city.city} (${city.year})`);
+
+  svg.append('text')
+      .attr('x', width / 2)
+      .attr('y', gaugeY + 135)
+      .attr('text-anchor', 'middle')
+      .attr('font-size', '13px')
+      .attr('fill', '#666')
+      .text(`${airbnbHomes.toLocaleString()} of ${totalHousing.toLocaleString()} homes`);
+}
+
+// ===================================================
 // ACT 5: Multi-city timeline (active listings by year)
 // Visible if: first_year <= year <= last_year
 // ===================================================
