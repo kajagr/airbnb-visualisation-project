@@ -19,7 +19,10 @@ const state = {
     act3Heatmap: null,
     // Act 4
     densityData: null,
-    densityChartRendered: false
+    densityChartRendered: false,
+    // Act 4.5
+    housingPressureData: null,
+    housingPressureLoaded: false,
 };
 
 const config = {
@@ -206,6 +209,92 @@ function setupScrollListener() {
     console.log('Scroll listener set up for', narrativeSteps.length, 'narrative steps');
 }
 
+function setupScrollNextButton() {
+    const button = document.getElementById('scroll-next-btn');
+    if (!button) return;
+    
+    // Get all narrative steps in order
+    const allSteps = Array.from(document.querySelectorAll('.narrative-step, .narrative-step-full'));
+    
+    // Function to find current step based on viewport
+    function getCurrentStep() {
+        const viewportCenter = window.innerHeight / 2;
+        let currentStep = null;
+        let minDistance = Infinity;
+        
+        allSteps.forEach(step => {
+            const rect = step.getBoundingClientRect();
+            const stepCenter = rect.top + rect.height / 2;
+            const distance = Math.abs(stepCenter - viewportCenter);
+            
+            // Check if step is in viewport (at least partially visible)
+            if (rect.top < viewportCenter + 100 && rect.bottom > viewportCenter - 100) {
+                if (distance < minDistance) {
+                    minDistance = distance;
+                    currentStep = step;
+                }
+            }
+        });
+        
+        return currentStep;
+    }
+    
+    // Function to get next step
+    function getNextStep() {
+        const currentStep = getCurrentStep();
+        if (!currentStep) {
+            // If no current step, return first step
+            return allSteps.length > 0 ? allSteps[0] : null;
+        }
+        
+        const currentIndex = allSteps.indexOf(currentStep);
+        if (currentIndex < allSteps.length - 1) {
+            return allSteps[currentIndex + 1];
+        }
+        
+        return null; // Last step, no next step
+    }
+    
+    // Function to scroll to next step
+    function scrollToNext() {
+        const nextStep = getNextStep();
+        if (nextStep) {
+            nextStep.scrollIntoView({ 
+                behavior: 'smooth', 
+                block: 'center' 
+            });
+        }
+    }
+    
+    // Button click handler
+    button.addEventListener('click', scrollToNext);
+    
+    // Show/hide button based on scroll position
+    function updateButtonVisibility() {
+        const nextStep = getNextStep();
+        if (nextStep) {
+            button.classList.remove('hidden');
+        } else {
+            button.classList.add('hidden');
+        }
+    }
+    
+    // Update button visibility on scroll (with debouncing)
+    let scrollTimeout;
+    window.addEventListener('scroll', () => {
+        clearTimeout(scrollTimeout);
+        scrollTimeout = setTimeout(updateButtonVisibility, 150);
+    }, { passive: true });
+    
+    // Also update on resize
+    window.addEventListener('resize', () => {
+        updateButtonVisibility();
+    });
+    
+    // Initial check
+    setTimeout(updateButtonVisibility, 500);
+}
+
 function activateStep(stepName) {
     if (state.currentStep === stepName) return;
     
@@ -295,6 +384,13 @@ async function loadData() {
         console.error('Error loading data:', error);
         alert('Error loading data. Check console for details.');
     }
+    state.housingPressureData = await d3.json('/data/processed/housing_pressure.json');
+    state.housingPressureLoaded = true;
+    console.log(
+        'Housing pressure data loaded:',
+        state.housingPressureData.length,
+        'cities'
+    );
 }
 
 async function preloadTopCities() {
@@ -610,6 +706,20 @@ function updateMapForStep(stepName) {
                 break;
         }
     }
+
+    // ACT 4.5: Housing Pressure
+    if (stepName === 'pressure-intro') {
+        renderHousingGauge('girona');
+    }
+
+    if (stepName === 'pressure-high') {
+        renderHousingGauge('bergamo'); // or malta
+    }
+
+    if (stepName === 'pressure-low') {
+        renderHousingGauge('berlin'); // or rotterdam
+    }
+
 
     // ACT 5: Response / Solutions steps (narrative-focused, no map updates)
     if (stepName?.startsWith('response-')) {

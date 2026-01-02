@@ -628,6 +628,37 @@ header h1 {
     stroke: #E8E8E8;
 }
 
+/* ================================
+   Act 4.5: Housing Pressure Gauge
+================================ */
+
+#housing-gauge svg {
+  display: block;
+  margin: 0 auto;
+}
+
+.gauge-value {
+  font-size: 22px;
+  font-weight: 600;
+  fill: #111;
+}
+
+.gauge-city {
+  font-size: 14px;
+  fill: #666;
+}
+
+.gauge-needle {
+  transition: transform 0.8s ease;
+}
+
+.chart-caption {
+  margin-top: 12px;
+  font-size: 13px;
+  color: #777;
+  text-align: center;
+}
+
 /* =========================
    ACT 5 – Timeline Controls
    ========================= */
@@ -873,8 +904,10 @@ header h1 {
     font-size: 0.85rem;
   }
 }
+
+
 /* ============================================================================
-   ACT 5: THE RESPONSE (FULL-WIDTH NARRATIVE)
+   ACT 6: THE RESPONSE (FULL-WIDTH NARRATIVE)
    ============================================================================ */
 
 .act6-container {
@@ -1093,6 +1126,7 @@ header h1 {
     line-height: 1.6;
     color: var(--text-medium);
 }
+
 
 /* Responsive for Act 5 */
 @media (max-width: 968px) {
