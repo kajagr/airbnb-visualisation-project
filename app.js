@@ -79,6 +79,9 @@ async function init() {
     // Setup scroll listener AFTER data is loaded
     setupScrollListener();
     
+    // Setup next section button
+    setupScrollNextButton();
+    
     // Restore last viewed act if available
     restoreLastAct();
     
@@ -206,35 +209,243 @@ function setupScrollListener() {
         }
     });
     
+    // Setup smooth section-by-section scrolling
+    setupSmoothSectionScrolling(narrativeSteps);
+    
     console.log('Scroll listener set up for', narrativeSteps.length, 'narrative steps');
 }
 
-function setupScrollNextButton() {
-    const button = document.getElementById('scroll-next-btn');
-    if (!button) return;
+function setupSmoothSectionScrolling(narrativeSteps) {
+    let isScrolling = false;
+    let scrollTimeout = null;
+    let lastScrollTime = 0;
+    const SCROLL_DEBOUNCE_MS = 1000; // Wait 1000ms between scroll actions
+    const SCROLL_THRESHOLD = 20; // Minimum scroll delta to trigger navigation
     
-    // Get all narrative steps in order
-    const allSteps = Array.from(document.querySelectorAll('.narrative-step, .narrative-step-full'));
+    // Convert NodeList to Array and sort by position in document
+    const stepsArray = Array.from(narrativeSteps).sort((a, b) => {
+        const rectA = a.getBoundingClientRect();
+        const rectB = b.getBoundingClientRect();
+        const scrollY = window.scrollY;
+        return (scrollY + rectA.top) - (scrollY + rectB.top);
+    });
     
-    // Function to find current step based on viewport
+    // Function to find the current step based on viewport center
     function getCurrentStep() {
         const viewportCenter = window.innerHeight / 2;
+        const scrollY = window.scrollY;
+        const viewportCenterAbsolute = scrollY + viewportCenter;
         let currentStep = null;
         let minDistance = Infinity;
         
-        allSteps.forEach(step => {
+        stepsArray.forEach(step => {
             const rect = step.getBoundingClientRect();
-            const stepCenter = rect.top + rect.height / 2;
-            const distance = Math.abs(stepCenter - viewportCenter);
+            const stepTop = scrollY + rect.top;
+            const stepBottom = stepTop + rect.height;
+            const stepCenter = stepTop + rect.height / 2;
             
-            // Check if step is in viewport (at least partially visible)
-            if (rect.top < viewportCenter + 100 && rect.bottom > viewportCenter - 100) {
+            // Check if viewport center is within this step (with some tolerance)
+            const tolerance = rect.height * 0.3; // 30% of step height
+            if (viewportCenterAbsolute >= stepTop - tolerance && viewportCenterAbsolute <= stepBottom + tolerance) {
+                const distance = Math.abs(viewportCenterAbsolute - stepCenter);
                 if (distance < minDistance) {
                     minDistance = distance;
                     currentStep = step;
                 }
             }
         });
+        
+        // If no step contains the viewport center, find the nearest one
+        if (!currentStep) {
+            stepsArray.forEach(step => {
+                const rect = step.getBoundingClientRect();
+                const stepTop = scrollY + rect.top;
+                const stepCenter = stepTop + rect.height / 2;
+                const distance = Math.abs(viewportCenterAbsolute - stepCenter);
+                
+                if (distance < minDistance) {
+                    minDistance = distance;
+                    currentStep = step;
+                }
+            });
+        }
+        
+        return currentStep;
+    }
+    
+    // Function to scroll to a step, centering it in the viewport
+    function scrollToStep(step) {
+        if (!step) return;
+        
+        isScrolling = true;
+        const rect = step.getBoundingClientRect();
+        const currentScrollY = window.scrollY;
+        const stepTop = currentScrollY + rect.top;
+        const stepHeight = rect.height;
+        const viewportHeight = window.innerHeight;
+        const viewportCenter = viewportHeight / 2;
+        
+        // Calculate the center of the step
+        const stepCenter = stepTop + stepHeight / 2;
+        
+        // Calculate target scroll position to center the step in the viewport
+        // We want: stepCenter = targetScrollY + viewportCenter
+        // So: targetScrollY = stepCenter - viewportCenter
+        const targetScrollY = stepCenter - viewportCenter;
+        
+        window.scrollTo({
+            top: Math.max(0, targetScrollY),
+            behavior: 'smooth'
+        });
+        
+        // Reset scrolling flag after animation completes
+        clearTimeout(scrollTimeout);
+        scrollTimeout = setTimeout(() => {
+            isScrolling = false;
+        }, SCROLL_DEBOUNCE_MS);
+    }
+    
+    // Wheel event handler
+    window.addEventListener('wheel', (e) => {
+        // Prevent default scrolling if we're handling it
+        if (isScrolling) {
+            e.preventDefault();
+            return;
+        }
+        
+        // Check if enough time has passed since last scroll
+        const now = Date.now();
+        if (now - lastScrollTime < 100) {
+            // Too soon after last scroll, ignore
+            return;
+        }
+        
+        // Only handle significant scrolls
+        if (Math.abs(e.deltaY) < SCROLL_THRESHOLD) {
+            return;
+        }
+        
+        // Find current step
+        const currentStep = getCurrentStep();
+        if (!currentStep) {
+            // If we can't find current step, scroll to first step
+            if (stepsArray.length > 0) {
+                e.preventDefault();
+                lastScrollTime = now;
+                scrollToStep(stepsArray[0]);
+            }
+            return;
+        }
+        
+        const currentIndex = stepsArray.indexOf(currentStep);
+        if (currentIndex === -1) return;
+        
+        // Determine scroll direction
+        const scrollingDown = e.deltaY > 0;
+        
+        // Find next/previous step
+        let targetStep = null;
+        if (scrollingDown && currentIndex < stepsArray.length - 1) {
+            targetStep = stepsArray[currentIndex + 1];
+        } else if (!scrollingDown && currentIndex > 0) {
+            targetStep = stepsArray[currentIndex - 1];
+        }
+        
+        // If we have a target step, scroll to it
+        if (targetStep) {
+            e.preventDefault();
+            lastScrollTime = now;
+            scrollToStep(targetStep);
+        }
+    }, { passive: false });
+    
+    // Also handle touch events for mobile
+    let touchStartY = 0;
+    let touchEndY = 0;
+    
+    window.addEventListener('touchstart', (e) => {
+        touchStartY = e.touches[0].clientY;
+    }, { passive: true });
+    
+    window.addEventListener('touchend', (e) => {
+        if (isScrolling) return;
+        
+        touchEndY = e.changedTouches[0].clientY;
+        const deltaY = touchStartY - touchEndY;
+        
+        if (Math.abs(deltaY) > 50) { // Minimum swipe distance
+            const currentStep = getCurrentStep();
+            if (!currentStep) return;
+            
+            const currentIndex = stepsArray.indexOf(currentStep);
+            if (currentIndex === -1) return;
+            
+            const scrollingDown = deltaY < 0;
+            let targetStep = null;
+            
+            if (scrollingDown && currentIndex < stepsArray.length - 1) {
+                targetStep = stepsArray[currentIndex + 1];
+            } else if (!scrollingDown && currentIndex > 0) {
+                targetStep = stepsArray[currentIndex - 1];
+            }
+            
+            if (targetStep) {
+                scrollToStep(targetStep);
+            }
+        }
+    }, { passive: true });
+}
+
+function setupScrollNextButton() {
+    const button = document.getElementById('scroll-next-btn');
+    if (!button) return;
+    
+    // Get all narrative steps in order (sorted by position)
+    const allSteps = Array.from(document.querySelectorAll('.narrative-step, .narrative-step-full'))
+        .sort((a, b) => {
+            const rectA = a.getBoundingClientRect();
+            const rectB = b.getBoundingClientRect();
+            const scrollY = window.scrollY;
+            return (scrollY + rectA.top) - (scrollY + rectB.top);
+        });
+    
+    // Function to find current step (same logic as smooth scrolling)
+    function getCurrentStep() {
+        const viewportCenter = window.innerHeight / 2;
+        const scrollY = window.scrollY;
+        const viewportCenterAbsolute = scrollY + viewportCenter;
+        let currentStep = null;
+        let minDistance = Infinity;
+        
+        allSteps.forEach(step => {
+            const rect = step.getBoundingClientRect();
+            const stepTop = scrollY + rect.top;
+            const stepBottom = stepTop + rect.height;
+            const stepCenter = stepTop + rect.height / 2;
+            
+            const tolerance = rect.height * 0.3;
+            if (viewportCenterAbsolute >= stepTop - tolerance && viewportCenterAbsolute <= stepBottom + tolerance) {
+                const distance = Math.abs(viewportCenterAbsolute - stepCenter);
+                if (distance < minDistance) {
+                    minDistance = distance;
+                    currentStep = step;
+                }
+            }
+        });
+        
+        if (!currentStep) {
+            allSteps.forEach(step => {
+                const rect = step.getBoundingClientRect();
+                const stepTop = scrollY + rect.top;
+                const stepCenter = stepTop + rect.height / 2;
+                const distance = Math.abs(viewportCenterAbsolute - stepCenter);
+                
+                if (distance < minDistance) {
+                    minDistance = distance;
+                    currentStep = step;
+                }
+            });
+        }
         
         return currentStep;
     }
@@ -243,7 +454,6 @@ function setupScrollNextButton() {
     function getNextStep() {
         const currentStep = getCurrentStep();
         if (!currentStep) {
-            // If no current step, return first step
             return allSteps.length > 0 ? allSteps[0] : null;
         }
         
@@ -252,18 +462,27 @@ function setupScrollNextButton() {
             return allSteps[currentIndex + 1];
         }
         
-        return null; // Last step, no next step
+        return null; // Last step
     }
     
-    // Function to scroll to next step
+    // Function to scroll to next step using the same smooth scrolling logic
     function scrollToNext() {
         const nextStep = getNextStep();
-        if (nextStep) {
-            nextStep.scrollIntoView({ 
-                behavior: 'smooth', 
-                block: 'center' 
-            });
-        }
+        if (!nextStep) return;
+        
+        const rect = nextStep.getBoundingClientRect();
+        const scrollY = window.scrollY;
+        const stepTop = scrollY + rect.top;
+        const stepHeight = rect.height;
+        const viewportHeight = window.innerHeight;
+        const viewportCenter = viewportHeight / 2;
+        const stepCenter = stepTop + stepHeight / 2;
+        const targetScrollY = stepCenter - viewportCenter;
+        
+        window.scrollTo({
+            top: Math.max(0, targetScrollY),
+            behavior: 'smooth'
+        });
     }
     
     // Button click handler
@@ -274,8 +493,10 @@ function setupScrollNextButton() {
         const nextStep = getNextStep();
         if (nextStep) {
             button.classList.remove('hidden');
+            button.setAttribute('aria-label', 'Next section');
         } else {
             button.classList.add('hidden');
+            button.setAttribute('aria-label', 'No more sections');
         }
     }
     
@@ -709,7 +930,7 @@ function updateMapForStep(stepName) {
 
     // ACT 4.5: Housing Pressure
     if (stepName === 'pressure-intro') {
-        renderHousingGauge('girona');
+        renderHousingGauge('edinburgh');
     }
 
     if (stepName === 'pressure-high') {
@@ -1590,7 +1811,7 @@ function renderHousingGauge(cityId) {
   const g = svg.append('g')
       .attr('transform', `translate(${width / 2}, ${gaugeY})`);
 
-  const maxValue = 15;
+  const maxValue = 10;
   const scale = d3.scaleLinear()
       .domain([0, maxValue])
       .range([-Math.PI * 0.75, Math.PI * 0.75]);
@@ -1613,7 +1834,7 @@ function renderHousingGauge(cityId) {
           .attr('opacity', 0.85);
   });
 
-  const ticks = [0, 2, 5, 10, 15];
+  const ticks = [0, 2, 5, 10];
   ticks.forEach(val => {
       const angle = scale(val);
       const innerR = radius - 28;
