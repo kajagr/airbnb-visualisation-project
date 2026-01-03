@@ -930,7 +930,7 @@ function updateMapForStep(stepName) {
 
     // ACT 4.5: Housing Pressure
     if (stepName === 'pressure-intro') {
-        renderHousingGauge('girona');
+        renderHousingGauge('edinburgh');
     }
 
     if (stepName === 'pressure-high') {
@@ -1811,7 +1811,7 @@ function renderHousingGauge(cityId) {
   const g = svg.append('g')
       .attr('transform', `translate(${width / 2}, ${gaugeY})`);
 
-  const maxValue = 15;
+  const maxValue = 10;
   const scale = d3.scaleLinear()
       .domain([0, maxValue])
       .range([-Math.PI * 0.75, Math.PI * 0.75]);
@@ -1834,7 +1834,7 @@ function renderHousingGauge(cityId) {
           .attr('opacity', 0.85);
   });
 
-  const ticks = [0, 2, 5, 10, 15];
+  const ticks = [0, 2, 5, 10];
   ticks.forEach(val => {
       const angle = scale(val);
       const innerR = radius - 28;
