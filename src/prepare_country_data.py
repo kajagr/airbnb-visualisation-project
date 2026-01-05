@@ -40,6 +40,12 @@ for city_info in cities_data:
     df["price"] = df["price"].replace(r"^\s*$", np.nan, regex=True)
     df["price"] = pd.to_numeric(df["price"], errors="coerce")
 
+    # Handle special cases
+    cities_with_weekly_prices = ["Mallorca", "Menorca", "Girona"]
+    if city in cities_with_weekly_prices:
+        print(f"⚠️  {city}: Converting weekly prices to nightly (÷7)")
+        df["price"] = df["price"] / 7
+    
     conversion_rate = CURRENCY_RATES_TO_EUR.get(currency)
     if conversion_rate is None:
         raise ValueError(f"Unknown currency {currency} for {city}, please provide a rate.")

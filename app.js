@@ -63,7 +63,7 @@ async function init() {
     
     // Set up basic event listeners first
     setupProgressDots();
-    setupActObserver();
+    // setupActObserver();  // ⭐ COMMENT OUT THIS LINE ⭐
     
     // Initialize maps
     initializeAct1Map();
@@ -82,7 +82,7 @@ async function init() {
     // Setup next section button
     setupScrollNextButton();
     
-    // Restore last viewed act if available
+    // Restore last viewed act
     restoreLastAct();
     
     console.log('✅ All initialization complete');
@@ -549,10 +549,12 @@ function activateStep(stepName) {
         updateProgressDots(3);
     } else if (stepName?.startsWith('impact-')) {
         updateProgressDots(4);
-    } else if (stepName === 'timeline') {
-        updateProgressDots(5);  // Act 5: Timeline
+    } else if (stepName?.startsWith('pressure-')) {
+        updateProgressDots(5);  // Act 5: Housing Pressure
+    } else if (stepName?.startsWith('timeline-')) {  // Changed from === 'timeline'
+        updateProgressDots(6);  // Act 6: Timeline
     } else if (stepName?.startsWith('response-')) {
-        updateProgressDots(6);  // Act 6: The Response
+        updateProgressDots(7);  // Act 7: The Response
     }
     
     // Update map based on step
@@ -672,7 +674,14 @@ async function loadCityListings(cityId, filename) {
 // ============================================================================
 
 function renderCityMarkers() {
+    const badCities = ['hague', 'rotterdam', 'vaud'];
+    
+    
     state.citiesData.forEach(city => {
+        if (badCities.includes(city.id)) {
+            return; // Skip this city
+        }
+        
         // Calculate marker size based on number of listings
         const size = Math.sqrt(city.count / 1000) * 4 + 8;
         
@@ -714,7 +723,6 @@ function renderCityMarkers() {
         }
     });
 
-    console.log('Rendered city markers');
 }
 
 // ============================================================================
@@ -850,13 +858,10 @@ function updateMapForStep(stepName) {
                 break;
                 
             case 'entire-home-intro':
-            case 'entire-home-outlier':
             case 'entire-home-top':
                 switchChartMetric('entire'); // Auto-switch to entire home
-                if (stepName === 'entire-home-outlier') {
-                    highlightAffordabilityCities(['Hague']);
-                } else if (stepName === 'entire-home-top') {
-                    highlightAffordabilityCities(['Munich', 'Prague', 'Berlin']);
+                if (stepName === 'entire-home-top') {
+                    highlightAffordabilityCities(['Munich', 'Prague', 'Dublin']);
                 } else {
                     highlightAffordabilityCities([]);
                 }
@@ -1013,6 +1018,11 @@ async function initializeAct2() {
     try {
         console.log('Loading affordability data...');
         affordabilityData = await d3.json('/data/processed/cities_affordability_2023.json');
+        
+        affordabilityData = affordabilityData.filter(d => 
+            d.city.toLowerCase() !== 'hague'
+        );
+        
         console.log('Affordability data loaded:', affordabilityData.length, 'cities');
         
         // Render initial chart
@@ -1065,6 +1075,12 @@ function renderAffordabilityChart(metric = 'private') {
             .text('Loading affordability data...');
         return;
     }
+
+    // FILTER OUT BAD DATA
+    const badCities = ['hague', 'rotterdam', 'vaud'];
+    const cleanData = affordabilityData.filter(d => 
+        !badCities.includes(d.city.toLowerCase())
+    );
     
     // Pick metric key
     const metricKey = metric === 'private' 
@@ -1072,7 +1088,7 @@ function renderAffordabilityChart(metric = 'private') {
         : 'affordability_entire_home_vs_house_rent';
     
     // Filter and sort data
-    const data = affordabilityData
+    const data = cleanData
         .filter(d => d[metricKey] != null && !isNaN(d[metricKey]))
         .map(d => ({
             country: d.country,
@@ -1092,8 +1108,8 @@ function renderAffordabilityChart(metric = 'private') {
     
     // Dimensions
     const containerWidth = container.node().getBoundingClientRect().width || 700;
-    const margin = { top: 20, right: 80, bottom: 30, left: 160 };
-    const rowHeight = 36;
+    const margin = { top: 50, right: 80, bottom: 50, left: 160 };
+    const rowHeight = 40;
     const height = data.length * rowHeight + margin.top + margin.bottom;
     const width = containerWidth;
     const innerWidth = width - margin.left - margin.right;
@@ -1105,8 +1121,20 @@ function renderAffordabilityChart(metric = 'private') {
         .attr('height', height);
     
     const g = svg.append('g')
-        .attr('transform', `translate(${margin.left},${margin.top})`);
-    
+    .attr('transform', `translate(${margin.left},${margin.top})`);
+
+    svg.append('text')
+        .attr('class', 'chart-title-text')
+        .attr('x', width / 2)
+        .attr('y', 20)
+        .attr('text-anchor', 'middle')
+        .style('font-size', '16px')
+        .style('font-weight', '600')
+        .style('fill', '#222')
+        .text(metric === 'private' 
+            ? 'Airbnb Income vs. Long-term Rent (Private Rooms)'
+            : 'Airbnb Income vs. Long-term Rent (Entire Homes)');
+
     // Scales
     const xMax = d3.max(data, d => d.value) || 1;
     const x = d3.scaleLinear()
@@ -1123,10 +1151,31 @@ function renderAffordabilityChart(metric = 'private') {
         .attr('class', 'axis')
         .attr('transform', `translate(0,${innerHeight})`)
         .call(d3.axisBottom(x).ticks(6).tickFormat(d => d.toFixed(1) + '×'));
-    
+
+    // ⭐ ADD X-AXIS LABEL ⭐
+    g.append('text')
+        .attr('class', 'axis-label')
+        .attr('x', innerWidth / 2)
+        .attr('y', innerHeight + 45)
+        .attr('text-anchor', 'middle')
+        .style('font-size', '13px')
+        .style('fill', '#222')
+        .text('Affordability Ratio (Monthly Airbnb Income ÷ Monthly Rent)');
+
     g.append('g')
         .attr('class', 'axis')
         .call(d3.axisLeft(y));
+
+    // ⭐ ADD Y-AXIS LABEL ⭐
+    g.append('text')
+        .attr('class', 'axis-label')
+        .attr('transform', 'rotate(-90)')
+        .attr('x', -innerHeight / 2)
+        .attr('y', -margin.left + 40)
+        .attr('text-anchor', 'middle')
+        .style('font-size', '13px')
+        .style('fill', '#222')
+        .text('City');
     
     // Tooltip
     let tooltip = d3.select('body').selectAll('.d3-tooltip').data([null]);
