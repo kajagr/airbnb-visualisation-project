@@ -966,8 +966,8 @@ header h1 {
 /* Policy comparison grid */
 .policy-grid {
     display: grid;
-    grid-template-columns: repeat(2, 1fr); /* 2x2 grid */
-    gap: 24px;
+    grid-template-columns: repeat(4, 1fr);  /* Changed from repeat(2, 1fr) */
+    gap: 16px;  /* Reduced from 20px */
     margin-top: 40px;
 }
 
@@ -1005,10 +1005,10 @@ header h1 {
 }
 
 .policy-city {
-    font-size: 1.4rem;
+    font-size: 1.3rem;
     font-weight: 700;
     color: var(--text-dark);
-    margin-bottom: 8px;
+    margin-bottom: 6px;
 }
 
 .policy-flag {
@@ -1017,20 +1017,20 @@ header h1 {
 }
 
 .policy-card h4 {
-    font-size: 1.2rem;
+    font-size: 1.1rem;
     font-weight: 600;
     color: var(--airbnb-red);
-    margin-bottom: 20px;
+    margin-bottom: 12px;
 }
 
 .policy-details {
-    margin-bottom: 20px;
+    margin-bottom: 12px;
 }
 
 .policy-item {
-    padding: 10px 0;
+    padding: 6px 0;
     border-bottom: 1px solid #F0F0F0;
-    font-size: 0.95rem;
+    font-size: 0.9rem;
     line-height: 1.5;
     color: var(--text-dark);
 }
@@ -1040,12 +1040,12 @@ header h1 {
 }
 
 .policy-result {
-    margin-top: 20px;
-    padding: 16px;
+    margin-top: 12px;
+    padding: 12px;
     background: rgba(255, 56, 92, 0.05);
     border-radius: 8px;
     font-size: 0.9rem;
-    line-height: 1.5;
+    line-height: 1.4;
     color: var(--text-dark);
 }
 

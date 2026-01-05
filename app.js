@@ -918,12 +918,12 @@ function updateMapForStep(stepName) {
                 
             case 'impact-extremes':
                 // Highlight extreme cases
-                highlightDensityCities(['south_aegean', 'crete', 'venice', 'florence', 'mallorca', 'copenhagen']);
+                highlightDensityCities(['copenhagen', 'florence', 'mallorca']);
                 break;
                 
             case 'impact-comparison':
                 // Highlight low-density cities
-                highlightDensityCities(['rotterdam', 'stockholm', 'berlin', 'naples']);
+                highlightDensityCities(['prague', 'sevilla', 'edinburgh']);
                 break;
                 
             case 'impact-transition':
@@ -1601,13 +1601,20 @@ async function initializeAct4() {
     try {
         console.log('Loading density data...');
         state.densityData = await d3.json('/data/processed/city_population_density.json');
+        
+        // ⭐ FILTER OUT WIKIPEDIA-SOURCED CITIES (regional data, not city data) ⭐
+        const wikipediaCities = ['sicily', 'crete', 'menorca', 'puglia', 'south_aegean', 'trentino', 'girona'];
+        state.densityData = state.densityData.filter(d => 
+            !wikipediaCities.includes(d.id)
+        );
+        
         console.log('Density data loaded:', state.densityData.length, 'cities');
         
         // Sort by density (highest first)
         state.densityData.sort((a, b) => b.airbnbs_per_1k - a.airbnbs_per_1k);
         
         // Take only top 20 cities
-        state.densityData = state.densityData.slice(0, 20);  // ← ADD THIS LINE
+        state.densityData = state.densityData.slice(0, 20);
         
         console.log('Using top 20 cities for chart');
         
@@ -1634,7 +1641,7 @@ function renderDensityChart() {
     
     // Dimensions
     const containerWidth = container.node().getBoundingClientRect().width || 700;
-    const margin = { top: 10, right: 80, bottom: 30, left: 180 };
+    const margin = { top: 10, right: 80, bottom: 50, left: 180 };
     const barHeight = 24;
     const height = data.length * barHeight + margin.top + margin.bottom;
     const width = containerWidth;
@@ -1665,7 +1672,30 @@ function renderDensityChart() {
         .attr('class', 'axis')
         .attr('transform', `translate(0,${innerHeight})`)
         .call(d3.axisBottom(x).ticks(6));
-    
+
+    // ⭐ ADD X-AXIS LABEL ⭐
+    g.append('text')
+        .attr('class', 'axis-label')
+        .attr('x', innerWidth / 2)
+        .attr('y', innerHeight + margin.bottom - 10)
+        .attr('text-anchor', 'middle')
+        .style('font-size', '13px')
+        .style('font-weight', '600')
+        .style('fill', '#222')
+        .text('Airbnb Listings per 1,000 Residents');
+
+    // ⭐ ADD Y-AXIS LABEL ⭐
+    g.append('text')
+        .attr('class', 'axis-label')
+        .attr('transform', 'rotate(-90)')
+        .attr('x', -innerHeight / 2)
+        .attr('y', -margin.left + 40)
+        .attr('text-anchor', 'middle')
+        .style('font-size', '13px')
+        .style('font-weight', '600')
+        .style('fill', '#222')
+        .text('City');
+
     g.append('g')
         .attr('class', 'axis')
         .call(d3.axisLeft(y).tickSize(0));
@@ -1848,9 +1878,9 @@ function renderHousingGauge(cityId) {
   containerSel.selectAll('*').remove();
 
   const width = 480;
-  const height = 400;
+  const height = 320;
   const radius = 140;
-  const gaugeY = 160;
+  const gaugeY = 140;
 
   const svg = containerSel.append('svg')
       .attr('width', width)
@@ -2091,6 +2121,18 @@ function startAct5Playback() {
       btn.setAttribute("aria-label", "Play timeline");
     }
     return;
+  }
+
+  const minYear = parseInt(slider.min);
+  slider.value = minYear;
+
+  // Force update to show min year
+  const cityState = act5Cache.get(act5CityKey);
+  if (cityState) {
+      cityState.currentYear = null; // Reset state
+      cityState.markers.clear();
+      act5Layer && act5Layer.clearLayers();
+      setYear(cityState, minYear);
   }
 
   act5IsPlaying = true;
