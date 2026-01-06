@@ -594,7 +594,7 @@ async function loadData() {
         console.log('Loading cities data...');
         
         // Load cities statistical data
-        state.citiesData = await d3.json('/data/processed/cities_statistical_data.json');
+        state.citiesData = await d3.json('data/processed/cities_statistical_data.json');
         console.log('Cities data loaded:', state.citiesData.length, 'cities');
         
         // Render city markers on Act 1 map
@@ -607,7 +607,7 @@ async function loadData() {
         console.error('Error loading data:', error);
         alert('Error loading data. Check console for details.');
     }
-    state.housingPressureData = await d3.json('/data/processed/housing_pressure.json');
+    state.housingPressureData = await d3.json('data/processed/housing_pressure.json');
     state.housingPressureLoaded = true;
     console.log(
         'Housing pressure data loaded:',
@@ -1017,7 +1017,7 @@ let affordabilityBarsAnimated = false; // Track if bars have been animated
 async function initializeAct2() {
     try {
         console.log('Loading affordability data...');
-        affordabilityData = await d3.json('/data/processed/cities_affordability_2023.json');
+        affordabilityData = await d3.json('data/processed/cities_affordability_2023.json');
         
         affordabilityData = affordabilityData.filter(d => 
             d.city.toLowerCase() !== 'hague'
@@ -1600,7 +1600,7 @@ let highlightedDensityCities = [];
 async function initializeAct4() {
     try {
         console.log('Loading density data...');
-        state.densityData = await d3.json('/data/processed/city_population_density.json');
+        state.densityData = await d3.json('data/processed/city_population_density.json');
         
         // ⭐ FILTER OUT WIKIPEDIA-SOURCED CITIES (regional data, not city data) ⭐
         const wikipediaCities = ['sicily', 'crete', 'menorca', 'puglia', 'south_aegean', 'trentino', 'girona'];
