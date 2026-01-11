@@ -647,7 +647,7 @@ async function preloadTopCities() {
 
 async function loadCityListings(cityId, filename) {
     try {
-        const listings = await d3.csv(`/data/processed/heatmaps/${filename}`);
+        const listings = await d3.csv(withBase(`data/processed/heatmaps/${filename}`));
         
         // Clean and parse data
         const validListings = [];
