@@ -1525,3 +1525,51 @@ header h1 {
 .hero-overlay {
     pointer-events: auto;
 }
+
+/* ============================================================================
+   ACT 3: ANIMATED STATS PANEL - Slide In/Out
+   Add these styles to your style.css
+   ============================================================================ */
+
+/* Stats panel initial state - hidden off-screen */
+.stats-panel-overlay {
+    transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1),
+                opacity 0.5s ease;
+    transform: translateX(-120%);  /* Hidden to the left */
+    opacity: 0;
+}
+
+/* Stats panel visible state - slide in */
+.stats-panel-overlay.show {
+    transform: translateX(0);
+    opacity: 1;
+}
+
+/* Optional: Add a subtle scale animation too */
+.stats-panel-overlay.show .stat-value {
+    animation: statNumberPop 0.4s ease-out 0.3s backwards;
+}
+
+@keyframes statNumberPop {
+    0% {
+        transform: scale(0.8);
+        opacity: 0;
+    }
+    60% {
+        transform: scale(1.05);
+    }
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+/* Smooth number transitions when city changes */
+.stat-value {
+    transition: color 0.3s ease;
+}
+
+/* Performance optimization */
+.stats-panel-overlay {
+    will-change: transform, opacity;
+}

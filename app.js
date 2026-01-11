@@ -33,7 +33,7 @@ const config = {
         maxZoom: 18
     },
     cityZoom: {
-        zoom: 11,
+        zoom: 12,
         duration: 2.4
     }
 };
@@ -755,11 +755,11 @@ function createCityHeatmap(cityId, listings) {
         max: 1.0,             // Maximum intensity value
         gradient: {           // Custom color gradient (blue → cyan → green → yellow → orange → red)
             0.0: 'rgba(0,0,255,0)',
-            0.2: 'rgba(0,255,255,0.5)',
-            0.4: 'rgba(0,255,0,0.6)',
-            0.6: 'rgba(255,255,0,0.7)',
-            0.8: 'rgba(255,128,0,0.8)',
-            1.0: 'rgba(255,0,0,0.9)'
+            0.2: 'rgba(0,255,255,0.2)',
+            0.4: 'rgba(0,255,0,0.3)',
+            0.6: 'rgba(255,255,0,0.4)',
+            0.8: 'rgba(255,128,0,0.5)',
+            1.0: 'rgba(255, 0, 0, 0.6)'
         }
     });
     
@@ -1453,7 +1453,7 @@ function showAct3City(cityId) {
     const cityInfo = state.citiesData.find(c => c.id === cityId);
     if (!cityInfo) return;
     
-    // Update stats panel
+    // Update stats panel (but keep it hidden for now)
     updateStatsPanel(cityInfo);
     
     // Zoom to city
@@ -1461,11 +1461,20 @@ function showAct3City(cityId) {
         duration: 2.4
     });
     
+    // 🎨 ANIMATION: Slide in stats panel after zoom starts
+    setTimeout(() => {
+        const statsPanel = document.querySelector('.stats-panel-overlay');
+        if (statsPanel) {
+            statsPanel.classList.add('show');
+        }
+    }, 800); // Slide in 0.8s after zoom starts
+    
     // Show visualization after zoom
     setTimeout(() => {
         updateAct3Visualization();
     }, 1500);
 }
+
 
 function updateAct3Visualization() {
     // Clear existing visualization
@@ -1590,15 +1599,39 @@ function updateStatsPanel(cityInfo) {
 }
 
 function resetAct3View() {
-    clearAct3Visualization();
-    state.act3Map.flyTo(config.europe.center, config.europe.zoom, {
-        duration: 1.5
+    // 🎨 ANIMATION: Slide out stats panel first
+    const statsPanel = document.querySelector('.stats-panel-overlay');
+    if (statsPanel) {
+        statsPanel.classList.remove('show');
+    }
+    
+    // Wait for slide-out animation, then reset
+    setTimeout(() => {
+        clearAct3Visualization();
+        state.act3Map.flyTo(config.europe.center, config.europe.zoom, {
+            duration: 1.5
+        });
+        
+        // Reset stats to default values
+        document.getElementById('stat-city').textContent = '-';
+        document.getElementById('stat-listings').textContent = '-';
+        document.getElementById('stat-price').textContent = '-';
+    }, 500); // Wait 500ms for slide-out animation
+}
+
+function updateStatsPanel(cityInfo) {
+    // Add smooth number transition class
+    const statValues = document.querySelectorAll('.stat-value');
+    statValues.forEach(el => {
+        el.style.transition = 'all 0.3s ease';
     });
     
-    // Reset stats
-    document.getElementById('stat-city').textContent = '-';
-    document.getElementById('stat-listings').textContent = '-';
-    document.getElementById('stat-price').textContent = '-';
+    // Update values
+    document.getElementById('stat-city').textContent = cityInfo.city;
+    document.getElementById('stat-listings').textContent = cityInfo.count.toLocaleString();
+    document.getElementById('stat-price').textContent = cityInfo.avg_price 
+        ? `€${cityInfo.avg_price.toFixed(0)}`
+        : 'N/A';
 }
 
 // ============================================================================
