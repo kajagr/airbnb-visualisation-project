@@ -33,7 +33,7 @@ const config = {
         maxZoom: 18
     },
     cityZoom: {
-        zoom: 12,
+        zoom: 11,
         duration: 2.4
     }
 };
@@ -43,8 +43,8 @@ const TOP_CITIES = [
     { id: 'london', name: 'London', step: 'city-1', filename: 'london_heatmap.csv' },
     { id: 'paris', name: 'Paris', step: 'city-2', filename: 'paris_heatmap.csv' },
     { id: 'rome', name: 'Rome', step: 'city-3', filename: 'rome_heatmap.csv' },
-    { id: 'istanbul', name: 'Istanbul', step: 'city-4', filename: 'istanbul_heatmap.csv' },
-    { id: 'madrid', name: 'Madrid', step: 'city-5', filename: 'madrid_heatmap.csv' }
+    // { id: 'istanbul', name: 'Istanbul', step: 'city-4', filename: 'istanbul_heatmap.csv' },
+    // { id: 'madrid', name: 'Madrid', step: 'city-5', filename: 'madrid_heatmap.csv' }
 ];
 
 // Act 3 cities for deep dive
