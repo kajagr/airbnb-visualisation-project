@@ -128,5 +128,58 @@ function initGSAPAnimations() {
     console.log('✅ Animations initialized');
 }
 
+ // ========================================================================
+    // 7. ACT POLICY CARDS FLIP AND LESSON CARDS SCALE
+    // ========================================================================
+
+
+function initPolicyCardFlipsGSAP() {
+    if (typeof gsap === 'undefined' || typeof ScrollTrigger === 'undefined') return;
+    
+    gsap.registerPlugin(ScrollTrigger);
+    
+    // Policy cards flip
+    document.querySelectorAll('.policy-card').forEach((card, index) => {
+        gsap.fromTo(card,
+            { rotateY: 180, opacity: 0 },
+            {
+                rotateY: 0,
+                opacity: 1,
+                duration: 1.2,
+                ease: 'power2.out',
+                delay: index * 0.2,
+                scrollTrigger: {
+                    trigger: card,
+                    start: 'top 85%',
+                    toggleActions: 'play none none none',
+                    once: true
+                }
+            }
+        );
+    });
+    
+    // Lesson cards scale
+    document.querySelectorAll('.lesson-card').forEach((card, index) => {
+        gsap.fromTo(card,
+            { scale: 0.8, opacity: 0 },
+            {
+                scale: 1,
+                opacity: 1,
+                duration: 0.6,
+                ease: 'back.out(1.2)',
+                delay: index * 0.15,
+                scrollTrigger: {
+                    trigger: card,
+                    start: 'top 85%',
+                    once: true
+                }
+            }
+        );
+    });
+}
+
+
 // Export for use in app.js
 window.initGSAPAnimations = initGSAPAnimations;
+window.initPolicyCardFlips = initPolicyCardFlips;
+

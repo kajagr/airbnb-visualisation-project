@@ -984,6 +984,15 @@ header h1 {
     margin-top: 40px;
 }
 
+/* Container needs perspective for 3D effect */
+.policy-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-top: 40px;
+    perspective: 1000px;  /* ← ADD THIS */
+}
+
 .policy-card {
     background: white;
     border-radius: 16px;
@@ -993,8 +1002,41 @@ header h1 {
     transition: all 0.3s ease;
     position: relative;
     overflow: hidden;
+    
+    /* ⭐ ADD THESE FOR FLIP ANIMATION ⭐ */
+    transform-style: preserve-3d;
+    transform: rotateY(180deg);  /* Start flipped backwards */
+    opacity: 0;
+    transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1),
+                opacity 0.8s ease;
+    backface-visibility: hidden;
 }
 
+/* When card flips in */
+.policy-card.flip-in {
+    transform: rotateY(0deg);  /* Flip to front */
+    opacity: 1;
+    box-shadow: 0 8px 30px rgba(255, 56, 92, 0.15);
+}
+
+/* Staggered delays for sequential flip */
+.policy-card:nth-child(1).flip-in {
+    transition-delay: 0s;
+}
+
+.policy-card:nth-child(2).flip-in {
+    transition-delay: 0.2s;
+}
+
+.policy-card:nth-child(3).flip-in {
+    transition-delay: 0.4s;
+}
+
+.policy-card:nth-child(4).flip-in {
+    transition-delay: 0.6s;
+}
+
+/* Keep existing ::before, :hover, etc. styles */
 .policy-card::before {
     content: '';
     position: absolute;
@@ -1008,7 +1050,7 @@ header h1 {
 }
 
 .policy-card:hover {
-    transform: translateY(-4px);
+    transform: translateY(-4px) rotateY(0deg);  /* ← Update this line */
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
     border-color: var(--airbnb-red);
 }
