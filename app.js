@@ -40,18 +40,18 @@ const config = {
 
 // Top 5 cities by listing count with their CSV filenames
 const TOP_CITIES = [
-    { id: 'london', name: 'London', step: 'city-1', filename: 'london.csv' },
-    { id: 'paris', name: 'Paris', step: 'city-2', filename: 'paris.csv' },
-    { id: 'rome', name: 'Rome', step: 'city-3', filename: 'rome.csv' },
-    { id: 'istanbul', name: 'Istanbul', step: 'city-4', filename: 'istanbul.csv' },
-    { id: 'madrid', name: 'Madrid', step: 'city-5', filename: 'madrid.csv' }
+    { id: 'london', name: 'London', step: 'city-1', filename: 'london_heatmap.csv' },
+    { id: 'paris', name: 'Paris', step: 'city-2', filename: 'paris_heatmap.csv' },
+    { id: 'rome', name: 'Rome', step: 'city-3', filename: 'rome_heatmap.csv' },
+    { id: 'istanbul', name: 'Istanbul', step: 'city-4', filename: 'istanbul_heatmap.csv' },
+    { id: 'madrid', name: 'Madrid', step: 'city-5', filename: 'madrid_heatmap.csv' }
 ];
 
 // Act 3 cities for deep dive
 const ACT3_CITIES = [
-    { id: 'barcelona', name: 'Barcelona', step: 'barcelona', filename: 'barcelona.csv' },
-    { id: 'lisbon', name: 'Lisbon', step: 'lisbon', filename: 'lisbon.csv' },
-    { id: 'amsterdam', name: 'Amsterdam', step: 'amsterdam', filename: 'amsterdam.csv' }
+    { id: 'barcelona', name: 'Barcelona', step: 'barcelona', filename: 'barcelona_heatmap.csv' },
+    { id: 'lisbon', name: 'Lisbon', step: 'lisbon', filename: 'lisbon_heatmap.csv' },
+    { id: 'amsterdam', name: 'Amsterdam', step: 'amsterdam', filename: 'amsterdam_heatmap.csv' }
 ];
 
 // For deployment
@@ -647,7 +647,7 @@ async function preloadTopCities() {
 
 async function loadCityListings(cityId, filename) {
     try {
-        const listings = await d3.csv(`/data/raw/listings/${filename}`);
+        const listings = await d3.csv(`/data/processed/heatmaps/${filename}`);
         
         // Clean and parse data
         const validListings = [];
