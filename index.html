@@ -58,7 +58,7 @@
         <div class="scrollytelling-container">
             
             <!-- ACT 1: The Scale -->
-            <section class="act" id="act1">
+            <section class="act" id="act1" data-bgcolor="#F7F7F7">
                 <div class="sticky-container">
                     <!-- Map (Left, Sticky) -->
                     <div class="sticky-visual">
@@ -149,7 +149,7 @@
             </section>
 
             <!-- ACT 2: The Pressure -->
-            <section class="act" id="act2">
+            <section class="act" id="act2" data-bgcolor="rgba(0, 166, 153, 0.08)">
                 <div class="sticky-container sticky-container-reversed">
                     <!-- Narrative (Left, Scrolling) -->
                     <div class="narrative-content narrative-content-left">
@@ -236,7 +236,7 @@
             </section>
 
             <!-- ACT 3: The Concentration -->
-            <section class="act" id="act3">
+            <section class="act" id="act3" data-bgcolor="#F7F7F7">
                 <div class="sticky-container">
                     <!-- Map (Left, Sticky) -->
                     <div class="sticky-visual">
@@ -338,7 +338,7 @@
             </section>
 
             <!-- ACT 4: The Impact -->
-            <section class="act" id="act4">
+            <section class="act" id="act4" data-bgcolor="rgba(252, 100, 45, 0.08)">
                 <div class="sticky-container sticky-container-reversed">
                     <!-- Narrative (Left, Scrolling) -->
                     <div class="narrative-content narrative-content-left">
@@ -364,7 +364,7 @@
                         <!-- Tourist hotspots -->
                         <div class="narrative-step" data-step="impact-extremes">
                             <h3>Tourist Saturation</h3>
-                            <div class="city-stat">40+ per 1k</div>
+                            <div class="city-stat">40+</div>
                             <p class="narrative-text">
                                 <strong>Copenhagen</strong> leads with 40.55 Airbnbs per 1,000 residents. Florence (36), Mallorca (35), and Venice (34) show similar patterns.
                             </p>
@@ -410,7 +410,7 @@
                 </div>
 
             <!-- ACT 4.5: HOUSING PRESSURE -->
-            <section class="act" id="act5">
+            <section class="act" id="act5" data-bgcolor="#F7F7F7">
                 <div class="sticky-container sticky-container-reversed">
 
                     <!-- Narrative (left) -->
@@ -470,7 +470,7 @@
             </section>
 
             <!-- ACT 5: Timeline (active listings by year), now supports city switching -->
-            <section class="act" id="act6">
+            <section class="act" id="act6" data-bgcolor="rgba(255, 90, 95, 0.08)">
               <div class="sticky-container">
                 <div class="sticky-visual">
                   <div id="act5-map" class="map-container"></div>
@@ -553,7 +553,7 @@
             </section>
 
             <!-- ACT 6: The Response -->
-            <section class="act" id="act7">
+            <section class="act" id="act7" data-bgcolor="#F7F7F7">
                 <div class="act6-container">
                     <!-- Intro -->
                     <div class="narrative-step-full" data-step="response-intro">
@@ -715,6 +715,9 @@
         <span class="scroll-next-text">Next</span>
     </button>
 
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
+    <script src="gsap_animations.js"></script>
     <script src="app.js"></script>
 </body>
 </html>

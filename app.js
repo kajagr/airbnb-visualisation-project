@@ -92,6 +92,8 @@ async function init() {
     
     // Restore last viewed act
     restoreLastAct();
+
+    initGSAPAnimations();
     
     console.log('✅ All initialization complete');
 }
@@ -218,7 +220,7 @@ function setupScrollListener() {
     });
     
     // Setup smooth section-by-section scrolling
-    setupSmoothSectionScrolling(narrativeSteps);
+    // setupSmoothSectionScrolling(narrativeSteps);
     
     console.log('Scroll listener set up for', narrativeSteps.length, 'narrative steps');
 }
