@@ -181,5 +181,5 @@ function initPolicyCardFlipsGSAP() {
 
 // Export for use in app.js
 window.initGSAPAnimations = initGSAPAnimations;
-window.initPolicyCardFlips = initPolicyCardFlips;
+window.initPolicyCardFlipsGSAP = initPolicyCardFlipsGSAP;
 

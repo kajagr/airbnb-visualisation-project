@@ -94,7 +94,7 @@ async function init() {
     restoreLastAct();
 
     initGSAPAnimations();
-    initPolicyCardFlips();
+    initPolicyCardFlipsGSAP();
     
     console.log('✅ All initialization complete');
 }
