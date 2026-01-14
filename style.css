@@ -603,8 +603,8 @@ header h1 {
 
 #density-chart {
     width: 100%;
-    min-height: 400px;  /* ← Reduced from 700px */
-    max-height: 85vh;   /* ← Don't exceed 85% of viewport height */
+    min-height: 400px;
+    max-height: 85vh;
 }
 
 .chart-note {
@@ -698,9 +698,9 @@ header h1 {
   display: flex;
   flex-direction: column;
   gap: 0;
-  height: 200px;           /* Ensure card only grows as needed */
-  max-height: none;       /* Remove any possible max-height inheritance */
-  min-height: unset;      /* Remove any forced min height */
+  height: 200px;
+  max-height: none;
+  min-height: unset;
 }
 
 .timeline-header {
@@ -979,8 +979,8 @@ header h1 {
 /* Policy comparison grid */
 .policy-grid {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);  /* Changed from repeat(2, 1fr) */
-    gap: 16px;  /* Reduced from 20px */
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
     margin-top: 40px;
 }
 
@@ -990,7 +990,7 @@ header h1 {
     grid-template-columns: repeat(4, 1fr);
     gap: 16px;
     margin-top: 40px;
-    perspective: 1000px;  /* ← ADD THIS */
+    perspective: 1000px;
 }
 
 .policy-card {
@@ -1003,7 +1003,7 @@ header h1 {
     position: relative;
     overflow: hidden;
     
-    /* ⭐ ADD THESE FOR FLIP ANIMATION ⭐ */
+    /* FLIP ANIMATION  */
     transform-style: preserve-3d;
     transform: rotateY(180deg);  /* Start flipped backwards */
     opacity: 0;
@@ -1050,7 +1050,7 @@ header h1 {
 }
 
 .policy-card:hover {
-    transform: translateY(-4px) rotateY(0deg);  /* ← Update this line */
+    transform: translateY(-4px) rotateY(0deg);
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
     border-color: var(--airbnb-red);
 }
@@ -1448,10 +1448,7 @@ header h1 {
     height: 100vh;
     min-height: 600px;
     overflow: hidden;
-    /* Single color background - matches the pink/salmon tone of your artwork */
     background: #02151c;
-    /* Or use a very subtle gradient from pink to slightly darker pink: */
-    /* background: linear-gradient(to bottom, #FFB4AC 0%, #FF9B92 100%); */
 }
 
 .parallax-layer {
@@ -1583,7 +1580,6 @@ header h1 {
 
 /* ============================================================================
    ACT 3: ANIMATED STATS PANEL - Slide In/Out
-   Add these styles to your style.css
    ============================================================================ */
 
 /* Stats panel initial state - hidden off-screen */

@@ -71,7 +71,7 @@ async function init() {
     
     // Set up basic event listeners first
     setupProgressDots();
-    // setupActObserver();  // ⭐ COMMENT OUT THIS LINE ⭐
+    // setupActObserver();
     
     // Initialize maps
     initializeAct1Map();
@@ -96,7 +96,7 @@ async function init() {
     initGSAPAnimations();
     initPolicyCardFlipsGSAP();
     
-    console.log('✅ All initialization complete');
+    console.log('All initialization complete');
 }
 
 // ============================================================================
@@ -1163,7 +1163,7 @@ function renderAffordabilityChart(metric = 'private') {
         .attr('transform', `translate(0,${innerHeight})`)
         .call(d3.axisBottom(x).ticks(6).tickFormat(d => d.toFixed(1) + '×'));
 
-    // ⭐ ADD X-AXIS LABEL ⭐
+    // ADD X-AXIS LABEL
     g.append('text')
         .attr('class', 'axis-label')
         .attr('x', innerWidth / 2)
@@ -1177,7 +1177,7 @@ function renderAffordabilityChart(metric = 'private') {
         .attr('class', 'axis')
         .call(d3.axisLeft(y));
 
-    // ⭐ ADD Y-AXIS LABEL ⭐
+    // ADD Y-AXIS LABEL
     g.append('text')
         .attr('class', 'axis-label')
         .attr('transform', 'rotate(-90)')
@@ -1462,7 +1462,7 @@ function showAct3City(cityId) {
         duration: 2.4
     });
     
-    // 🎨 ANIMATION: Slide in stats panel after zoom starts
+    // ANIMATION: Slide in stats panel after zoom starts
     setTimeout(() => {
         const statsPanel = document.querySelector('.stats-panel-overlay');
         if (statsPanel) {
@@ -1600,7 +1600,7 @@ function updateStatsPanel(cityInfo) {
 }
 
 function resetAct3View() {
-    // 🎨 ANIMATION: Slide out stats panel first
+    // ANIMATION: Slide out stats panel first
     const statsPanel = document.querySelector('.stats-panel-overlay');
     if (statsPanel) {
         statsPanel.classList.remove('show');
@@ -1646,7 +1646,7 @@ async function initializeAct4() {
         console.log('Loading density data...');
         state.densityData = await d3.json(withBase('data/processed/city_population_density.json'));
         
-        // ⭐ FILTER OUT WIKIPEDIA-SOURCED CITIES (regional data, not city data) ⭐
+        //  FILTER OUT WIKIPEDIA-SOURCED CITIES (regional data, not city data)
         const wikipediaCities = ['sicily', 'crete', 'menorca', 'puglia', 'south_aegean', 'trentino', 'girona'];
         state.densityData = state.densityData.filter(d => 
             !wikipediaCities.includes(d.id)
@@ -1717,7 +1717,7 @@ function renderDensityChart() {
         .attr('transform', `translate(0,${innerHeight})`)
         .call(d3.axisBottom(x).ticks(6));
 
-    // ⭐ ADD X-AXIS LABEL ⭐
+    // ADD X-AXIS LABEL
     g.append('text')
         .attr('class', 'axis-label')
         .attr('x', innerWidth / 2)
@@ -1728,7 +1728,7 @@ function renderDensityChart() {
         .style('fill', '#222')
         .text('Airbnb Listings per 1,000 Residents');
 
-    // ⭐ ADD Y-AXIS LABEL ⭐
+    // ADD Y-AXIS LABEL
     g.append('text')
         .attr('class', 'axis-label')
         .attr('transform', 'rotate(-90)')

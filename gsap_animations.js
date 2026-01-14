@@ -3,11 +3,12 @@
  * Just narrative fade-in and number counters
  */
 
+
 function initGSAPAnimations() {
     // Register ScrollTrigger plugin
     gsap.registerPlugin(ScrollTrigger);
     
-    console.log('🎨 Initializing animations...');
+    console.log('Initializing animations...');
     
     // ========================================================================
     // 1. PARALLAX HERO EFFECT
@@ -125,7 +126,7 @@ function initGSAPAnimations() {
         });
     });
     
-    console.log('✅ Animations initialized');
+    console.log('Animations initialized');
 }
 
  // ========================================================================
