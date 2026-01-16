@@ -148,5 +148,5 @@ airbnb-visualisation-project/
 
 ## 🎬 Demo
 
-🔗 **[Live Demo](https://yourusername.github.io/airbnb-viz)**
+🔗 **[Live Demo](https://kajagr.github.io/airbnb-visualisation-project/)**
 
